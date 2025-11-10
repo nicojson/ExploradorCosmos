@@ -6,9 +6,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.image.ImageView?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.explorandoelcosmos.controllers.MainProgramController"
             prefHeight="400.0" prefWidth="600.0">
+    <StackPane AnchorPane.topAnchor="0.0"
+               AnchorPane.bottomAnchor="0.0"
+               AnchorPane.rightAnchor="0.0"
+               AnchorPane.leftAnchor="0.0">
+
+
+
+        <ImageView fx:id="SpaceXImage"
+                    StackPane.alignment="CENTER"
+        />
+
+
+    </StackPane>
+
+    <HBox>
+        <Button fx:id="btnImage"
+                text="obtener imagen de SpaceXAPI"
+                onAction="#obtenerImagen"/>
+
+        <Button fx:id="btnCerrarSeccion" text="Cerrar Sección" />
+    </HBox>
+
+
 
 </AnchorPane>

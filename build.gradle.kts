@@ -11,6 +11,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 val junitVersion = "5.12.1"
@@ -36,12 +37,15 @@ javafx {
 }
 
 dependencies {
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.mysql:mysql-connector-j:8.0.33")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+
 }
 
 tasks.withType<Test> {
