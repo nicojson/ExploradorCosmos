@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="30" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.registerController"
+      prefHeight="400.0" prefWidth="600.0" style="-fx-padding: 20;">
+
+    <HBox spacing="60" alignment="CENTER">
+        <Label text="New user" minWidth="120"/>
+        <TextField fx:id="newUserFld" promptText="Type a new user"/>
+    </HBox>
+
+    <HBox spacing="60" alignment="CENTER">
+        <Label text="Password" minWidth="120"/>
+        <PasswordField fx:id="newPasswordFld" promptText="Type your password"/>
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Label text="Confirm password" minWidth="120"/>
+        <PasswordField fx:id="confirmPasswordFld" promptText="Confirm your password"/>
+    </HBox>
+
+    <HBox spacing="50" alignment="CENTER">
+        <Button fx:id="cancelBtn" text="Cancel" onAction="#onCancelButtonClick"/>
+        <Button fx:id="registerBtn" text="Register" onAction="#onRegisterButtonClick"/>
+    </HBox>
+
+</VBox>

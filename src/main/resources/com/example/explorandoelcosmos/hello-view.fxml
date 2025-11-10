@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <HBox spacing="50" alignment="CENTER">
+        <Label text="User"/>
+        <TextField fx:id="userFld" promptText="Type your user"/>
+    </HBox>
+
+    <HBox spacing="25" alignment="CENTER">
+        <Label text="Password"/>
+        <PasswordField fx:id="passwordFld" promptText="Type your password"/>
+    </HBox>
+
+    <HBox spacing="50" alignment="CENTER">
+        <Button text="Cancel" fx:id="cancelBtn" onAction="#onCancelButtonClick" />
+        <Button text="Login" fx:id="loginBtn" onAction="#onLoginButtonClick" />
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <Button text="Register" fx:id="registerBtn" onAction="#onRegisterButtonClick"/>
+    </HBox>
+
+</VBox>
+
