@@ -62,7 +62,9 @@ public class HelloController {
     @FXML
     protected void onRegisterButtonClick() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("register-view.fxml"));
+            // Cargar la vista de registro
+            //utilizar ruta absolta
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/register-view.fxml"));
             Parent registerRoot = loader.load();
             Scene scene = registerBtn.getScene();
             scene.setRoot(registerRoot);
@@ -70,6 +72,8 @@ public class HelloController {
             stage.setTitle("Registro");
         } catch (IOException e) {
             e.printStackTrace();
+            //mostrar alerta
+            showAlert(Alert.AlertType.ERROR, "Error crítico", "No se pudo cargar la vista de registro.");
         }
     }
 
@@ -83,7 +87,7 @@ public class HelloController {
 
     private void loadMainProgramView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("mainProgram-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/mainProgram-view.fxml"));
             Parent mainRoot = loader.load();
             Scene scene = loginBtn.getScene();
             Stage stage = (Stage) scene.getWindow();

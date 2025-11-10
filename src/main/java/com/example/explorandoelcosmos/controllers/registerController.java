@@ -31,7 +31,7 @@ public class registerController {
     @FXML
     protected void onCancelButtonClick() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/hello-view.fxml"));
             Parent loginRoot = loader.load();
             Scene scene = cancelBtn.getScene();
             scene.setRoot(loginRoot);
