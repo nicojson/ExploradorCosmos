@@ -1,110 +1,171 @@
+
 .root {
-    -fx-background-color: #2E3440; /* Nord Polar Night */
+    -fx-background-color: linear-gradient(to bottom right, #0B1B3A, #3D0E4C);
     -fx-font-family: "Segoe UI", Arial, sans-serif;
-    -fx-font-size: 14px;
-}
-
-.label {
-    -fx-text-fill: #D8DEE9; /* Nord Snow Storm */
-    -fx-font-weight: bold;
-}
-
-.text-field, .password-field {
-    -fx-background-color: #4C566A; /* Nord Polar Night darker */
-    -fx-text-fill: #ECEFF4; /* Nord Snow Storm */
-    -fx-prompt-text-fill: #A3ABB2;
-    -fx-background-radius: 5;
-    -fx-border-color: #4C566A;
-    -fx-border-radius: 5;
-    -fx-padding: 8;
-}
-
-.text-field:focused, .password-field:focused {
-    -fx-border-color: #88C0D0; /* Nord Frost */
-}
-
-.button {
-    -fx-background-color: #5E81AC; /* Nord Frost */
-    -fx-text-fill: #ECEFF4;
-    -fx-font-weight: bold;
-    -fx-background-radius: 5;
-    -fx-padding: 10 20;
-    -fx-cursor: hand;
-}
-
-.button:hover {
-    -fx-background-color: #81A1C1; /* Nord Frost lighter */
-}
-
-#cancelBtn {
-    -fx-background-color: #BF616A; /* Nord Aurora */
-}
-
-#cancelBtn:hover {
-    -fx-background-color: #D08770; /* Nord Aurora lighter */
 }
 
 .main-container {
-    -fx-background-color: #3B4252;
-    -fx-padding: 40;
+    -fx-background-color: #1B3B6F; /* Astro Dark Blue */
+    -fx-padding: 45;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 25, 0, 0, 8);
+}
+.main-container .label {
+    -fx-text-fill: #A9C5EC; /* Astro Light Blue */
+    -fx-font-weight: bold;
+}
+.main-container .text-field, .main-container .password-field {
+    -fx-background-color: #3D0E4C; /* Galaxy Dark Purple */
+    -fx-text-fill: #E5D3EA; /* Galaxy Lightest Purple */
+    -fx-prompt-text-fill: #B893C4; /* Galaxy Light Purple */
+    -fx-background-radius: 8;
+    -fx-border-color: #5F2B70; /* Galaxy Purple Border */
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+.main-container .text-field:focused, .main-container .password-field:focused {
+    -fx-border-color: #F5CDEB; /* Pastel Pink */
+    -fx-border-width: 2;
+}
+#loginBtn {
+    -fx-background-color: #A0B9E0; /* Pastel Blue */
+    -fx-text-fill: #0B1B3A; /* Astro Darkest Navy */
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 12 22;
+    -fx-cursor: hand;
+}
+#loginBtn:hover { -fx-background-color: #C8BBE0; }
+#cancelBtn {
+    -fx-background-color: transparent;
+    -fx-border-color: #6B94D3; /* Astro Medium Blue */
+    -fx-text-fill: #A9C5EC; /* Astro Light Blue */
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 12 22;
+    -fx-cursor: hand;
+}
+#cancelBtn:hover { -fx-background-color: #1B3B6F; }
+
+/* Barras superior e inferior */
+.top-bar, .bottom-bar {
+    -fx-background-color: #1B3B6F; /* Astro Dark Blue */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+.top-bar .label, .bottom-bar .label {
+    -fx-text-fill: #A9C5EC; /* Astro Light Blue */
+}
+
+/* Título "Explorador del Cosmos" */
+.title {
+    -fx-font-size: 32px; /* Más grande */
+    -fx-text-fill: #F9E7B6; /* Pastel Yellow */
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(249, 231, 182, 0.3), 15, 0, 0, 0);
+}
+
+/* --- Barra de Búsqueda --- */
+/* (Usamos la clase .center-vbox para apuntar al botón) */
+.center-vbox #searchField {
+    -fx-background-color: #5F2B70; /* Galaxy Purple */
+    -fx-text-fill: #E5D3EA; /* Galaxy Lightest Purple */
+    -fx-prompt-text-fill: #B893C4; /* Galaxy Light Purple */
+    -fx-background-radius: 20; /* Redondeado */
+    -fx-border-color: #3D0E4C;
+    -fx-border-radius: 20;
+    -fx-padding: 10 15;
+}
+.center-vbox #searchField:focused {
+    -fx-border-color: #F5CDEB; /* Pastel Pink */
+    -fx-border-width: 2;
+}
+.center-vbox .button {
+    -fx-background-color: #A0B9E0; /* Pastel Blue */
+    -fx-text-fill: #0B1B3A; /* Astro Darkest Navy */
+    -fx-font-weight: bold;
+    -fx-background-radius: 20; /* Redondeado */
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+.center-vbox .button:hover {
+    -fx-background-color: #C8BBE0; /* Pastel Lavender */
+}
+
+
+/* --- Etiquetas de Filtro (Estilo Pestaña) --- */
+.filter-bar {
+    -fx-background-color: #1B3B6F; /* Astro Dark Blue */
+    -fx-background-radius: 6; 
+    -fx-padding: 4px; 
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+/* ESTADO INACTIVO (como "Calcular Tiempo") */
+.api-label {
+    -fx-background-color: transparent;
+    -fx-text-fill: #A9C5EC; /* Astro Light Blue */
+    -fx-font-weight: bold;
+    -fx-padding: 8 18;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-cursor: hand;
+}
+/* ESTADO ACTIVO (como "Calcular Interés") */
+.api-label-active {
+    -fx-background-color: #E5D3EA; /* Galaxy Lightest Purple (casi blanco) */
+    -fx-text-fill: #3D0E4C; /* Galaxy Dark Purple */
+    -fx-font-weight: bold;
+    -fx-padding: 8 18;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-cursor: hand;
+}
+/* Efecto :hover para el botón INACTIVO */
+.api-label:hover {
+    -fx-background-color: #3A65A4; /* Astro Medium Blue */
+    -fx-text-fill: white;
+}
+/* Efecto :hover para el botón ACTIVO */
+.api-label-active:hover {
+    -fx-background-color: #F5CDEB; /* Pastel Pink (un hover sutil) */
+}
+
+.reels-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-fit-to-width: true; /* Muy importante para el TilePane */
+}
+.reels-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Estilo de la barra de scroll VERTICAL */
+.reels-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: #3D0E4C; /* Galaxy Dark Purple */
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-padding: 5;
+}
+.reels-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #B893C4; /* Galaxy Light Purple */
+    -fx-background-radius: 10;
 }
 
-/* Estilos para mainProgram-view.fxml */
-.CSS_mainprogram {
-    -fx-background-color: #2E3440;
+/* Tarjeta individual del carrusel (el .reel) */
+.reel {
+    -fx-background-color: #3A65A4; /* Astro Medium Blue */
+    -fx-padding: 15;
+    -fx-background-radius: 10;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
 }
-
-.CSS_mainprogram .top-bar {
-    -fx-background-color: #3B4252;
-    -fx-padding: 10;
-}
-
-.CSS_mainprogram .bottom-bar {
-    -fx-background-color: #3B4252;
-    -fx-padding: 10;
-}
-
-.CSS_mainprogram .title {
-    -fx-font-size: 24px;
-    -fx-text-fill: #ECEFF4;
+/* Estilo para la etiqueta dentro del reel */
+.reel .label {
+    -fx-text-fill: #EAF1F9; /* Azul Claro 1 */
     -fx-font-weight: bold;
 }
 
-.CSS_mainprogram .api-label {
-    -fx-background-color: #434C5E;
-    -fx-padding: 10;
-    -fx-background-radius: 5;
-    -fx-text-fill: #D8DEE9;
+.bottom-bar {
+    -fx-background-color: #0B1B3A;
 }
-
-.CSS_mainprogram .menu-button .arrow-button {
-    -fx-padding: 0;
-}
-
-.CSS_mainprogram .menu-button .arrow {
-    -fx-padding: 0;
-}
-
-.CSS_mainprogram .menu-button {
-    -fx-background-color: transparent;
-    -fx-font-size: 20px;
-    -fx-text-fill: #ECEFF4;
-}
-
-.CSS_mainprogram .reels-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-.CSS_mainprogram .reels-scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.CSS_mainprogram .reel {
-    -fx-background-color: #434C5E;
-    -fx-padding: 10;
-    -fx-background-radius: 5;
-    -fx-alignment: center;
+.bottom-bar .label {
+    -fx-text-fill: #6B94D3;
 }
