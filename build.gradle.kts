@@ -37,7 +37,12 @@ javafx {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // Logging dependency
     implementation("org.controlsfx:controlsfx:11.2.1")
     implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
     implementation("org.mindrot:jbcrypt:0.4")

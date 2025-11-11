@@ -50,3 +50,61 @@
     -fx-background-radius: 10;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
 }
+
+/* Estilos para mainProgram-view.fxml */
+.CSS_mainprogram {
+    -fx-background-color: #2E3440;
+}
+
+.CSS_mainprogram .top-bar {
+    -fx-background-color: #3B4252;
+    -fx-padding: 10;
+}
+
+.CSS_mainprogram .bottom-bar {
+    -fx-background-color: #3B4252;
+    -fx-padding: 10;
+}
+
+.CSS_mainprogram .title {
+    -fx-font-size: 24px;
+    -fx-text-fill: #ECEFF4;
+    -fx-font-weight: bold;
+}
+
+.CSS_mainprogram .api-label {
+    -fx-background-color: #434C5E;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+    -fx-text-fill: #D8DEE9;
+}
+
+.CSS_mainprogram .menu-button .arrow-button {
+    -fx-padding: 0;
+}
+
+.CSS_mainprogram .menu-button .arrow {
+    -fx-padding: 0;
+}
+
+.CSS_mainprogram .menu-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 20px;
+    -fx-text-fill: #ECEFF4;
+}
+
+.CSS_mainprogram .reels-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.CSS_mainprogram .reels-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.CSS_mainprogram .reel {
+    -fx-background-color: #434C5E;
+    -fx-padding: 10;
+    -fx-background-radius: 5;
+    -fx-alignment: center;
+}
