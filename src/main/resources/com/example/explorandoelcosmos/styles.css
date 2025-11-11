@@ -1,0 +1,52 @@
+.root {
+    -fx-background-color: #2E3440; /* Nord Polar Night */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+}
+
+.label {
+    -fx-text-fill: #D8DEE9; /* Nord Snow Storm */
+    -fx-font-weight: bold;
+}
+
+.text-field, .password-field {
+    -fx-background-color: #4C566A; /* Nord Polar Night darker */
+    -fx-text-fill: #ECEFF4; /* Nord Snow Storm */
+    -fx-prompt-text-fill: #A3ABB2;
+    -fx-background-radius: 5;
+    -fx-border-color: #4C566A;
+    -fx-border-radius: 5;
+    -fx-padding: 8;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #88C0D0; /* Nord Frost */
+}
+
+.button {
+    -fx-background-color: #5E81AC; /* Nord Frost */
+    -fx-text-fill: #ECEFF4;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #81A1C1; /* Nord Frost lighter */
+}
+
+#cancelBtn {
+    -fx-background-color: #BF616A; /* Nord Aurora */
+}
+
+#cancelBtn:hover {
+    -fx-background-color: #D08770; /* Nord Aurora lighter */
+}
+
+.main-container {
+    -fx-background-color: #3B4252;
+    -fx-padding: 40;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
