@@ -1,7 +1,6 @@
 package com.example.explorandoelcosmos.controllers;
 
 import com.example.explorandoelcosmos.service.SpaceXDataService;
-// ¡No necesitamos Launch.java para esta vista!
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
