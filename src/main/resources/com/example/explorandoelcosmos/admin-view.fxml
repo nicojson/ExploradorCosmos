@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.explorandoelcosmos.controllers.AdminController"
+      spacing="20" styleClass="root" stylesheets="@styles.css">
+    <padding>
+        <Insets top="20" right="40" bottom="20" left="40"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label text="[ PANEL DE ADMINISTRACIÓN ]" styleClass="title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Ir a la App Principal" onAction="#handleGoToMainApp"/>
+    </HBox>
+
+    <TabPane VBox.vgrow="ALWAYS">
+        <tabs>
+            <Tab text="Gestión de API Keys" closable="false">
+                <VBox spacing="15" style="-fx-padding: 20px;">
+                    <Label text="Configuración de Endpoints API"/>
+                    
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Seleccionar Endpoint:"/>
+                        <ComboBox fx:id="endpointComboBox" prefWidth="200"/>
+                        <Button text="Cargar" onAction="#handleLoadEndpoint"/>
+                        <Button text="Nuevo" onAction="#handleNewEndpoint"/>
+                    </HBox>
+
+                    <GridPane hgap="10" vgap="10">
+                        <Label text="Nombre del Endpoint:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="endpointNameField" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="300"/>
+                        
+                        <Label text="API Key (si aplica):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="App ID (si aplica):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="appIdField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="App Secret (si aplica):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="appSecretField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Guardar Configuración" onAction="#handleSaveEndpoint" styleClass="form-button"/>
+                        <Button text="Eliminar Endpoint" onAction="#handleDeleteEndpoint" styleClass="form-button" style="-fx-background-color: #c0392b;"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+            <Tab text="Gestión de Usuarios" closable="false">
+                <VBox spacing="15" style="-fx-padding: 20px;">
+                    <Label text="Usuarios Registrados"/>
+                    <StackPane fx:id="userTablePane" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="userTableView">
+                            <columns>
+                                <TableColumn fx:id="idColumn" text="ID"/>
+                                <TableColumn fx:id="usernameColumn" text="Username"/>
+                                <TableColumn fx:id="roleColumn" text="Rol"/>
+                            </columns>
+                        </TableView>
+                    </StackPane>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Eliminar Usuario Seleccionado" onAction="#handleDeleteUser" styleClass="form-button" style="-fx-background-color: #c0392b;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Cambiar rol a:"/>
+                        <ComboBox fx:id="roleComboBox"/>
+                        <Button text="Actualizar Rol" onAction="#handleUpdateUserRole"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </tabs>
+    </TabPane>
+</VBox>

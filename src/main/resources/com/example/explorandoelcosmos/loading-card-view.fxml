@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      styleClass="card-view"
+      alignment="TOP_CENTER"
+      spacing="10">
+
+    <!-- Marcador de posición para la imagen -->
+    <Region styleClass="loading-placeholder" prefHeight="120.0"/>
+
+    <!-- Marcador de posición para el título -->
+    <Region styleClass="loading-placeholder" prefHeight="15.0" maxWidth="140.0"/>
+
+    <!-- Marcador de posición para los botones -->
+    <Region styleClass="loading-placeholder" prefHeight="20.0" maxWidth="80.0"/>
+
+    <padding>
+        <Insets bottom="10.0"/>
+    </padding>
+</VBox>

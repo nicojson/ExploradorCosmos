@@ -1,43 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.layout.HBox?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.explorandoelcosmos.controllers.registerController"
-      stylesheets="@styles.css" styleClass="root">
+      prefHeight="600.0" prefWidth="700.0"
+      alignment="CENTER" spacing="30.0"
+      styleClass="root" stylesheets="@styles.css">
+
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
     </padding>
 
-    <VBox spacing="15" alignment="CENTER" styleClass="main-container">
-        <Text text="Crear Cuenta" fill="white">
-            <font>
-                <Font name="System Bold" size="24.0" />
-            </font>
-        </Text>
+    <Text text="[ SOLICITUD DE ACCESO ]" styleClass="title" style="-fx-font-size: 28px;"/>
 
-        <VBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="Nuevo Usuario"/>
-            <TextField fx:id="newUserFld" promptText="Introduce un nombre de usuario"/>
-        </VBox>
+    <VBox spacing="20.0" maxWidth="350.0">
+        <TextField fx:id="newUserFld" promptText="Asignar ID de Operador" styleClass="search-field"/>
+        <PasswordField fx:id="newPasswordFld" promptText="Definir Clave de Acceso" styleClass="search-field"/>
+        <PasswordField fx:id="confirmPasswordFld" promptText="Confirmar Clave de Acceso" styleClass="search-field"/>
+    </VBox>
 
-        <VBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="Contraseña"/>
-            <PasswordField fx:id="newPasswordFld" promptText="Introduce una contraseña"/>
-        </VBox>
-
-        <VBox spacing="5" alignment="CENTER_LEFT">
-            <Label text="Confirmar Contraseña"/>
-            <PasswordField fx:id="confirmPasswordFld" promptText="Confirma tu contraseña"/>
-        </VBox>
-
-        <HBox spacing="20" alignment="CENTER" style="-fx-padding: 20 0 0 0;">
-            <Button fx:id="cancelBtn" text="Cancelar" onAction="#onCancelButtonClick"/>
-            <Button fx:id="registerBtn" text="Registrarse" onAction="#onRegisterButtonClick"/>
+    <VBox spacing="15.0" alignment="CENTER">
+        <Button fx:id="registerBtn" text="ENVIAR SOLICITUD" onAction="#onRegisterButtonClick" styleClass="form-button" prefWidth="350.0"/>
+        <HBox alignment="CENTER" spacing="5">
+            <Text text="¿Ya tienes credenciales?" styleClass="form-text"/>
+            <Button fx:id="cancelBtn" text="Volver al Acceso" onAction="#onCancelButtonClick" styleClass="link-button"/>
         </HBox>
     </VBox>
 

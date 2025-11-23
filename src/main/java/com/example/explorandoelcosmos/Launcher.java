@@ -1,9 +1,12 @@
 package com.example.explorandoelcosmos;
 
-import javafx.application.Application;
-
+/**
+ * Esta clase es el punto de entrada principal para la aplicación.
+ * Su único propósito es llamar al main de HelloApplication.
+ * Esto es una solución común para evitar problemas de carga de JavaFX en algunos entornos.
+ */
 public class Launcher {
     public static void main(String[] args) {
-        Application.launch(HelloApplication.class, args);
+        HelloApplication.main(args);
     }
 }

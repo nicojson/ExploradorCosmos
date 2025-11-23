@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.TilePane?> <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.explorandoelcosmos.controllers.MainProgramController"
-            prefHeight="600.0" prefWidth="800.0"
-            styleClass="root"
-            stylesheets="@styles.css">
+<StackPane fx:id="rootStackPane"
+           xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.explorandoelcosmos.controllers.MainProgramController"
+           prefHeight="800.0" prefWidth="1200.0"
+           styleClass="root" stylesheets="@styles.css">
 
-    <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <top>
-            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="10.0" styleClass="top-bar" BorderPane.alignment="CENTER">
+    <!-- OCULAR CENTRAL (Contenedor de Contenido) -->
+    <ScrollPane fx:id="contentScrollPane" styleClass="ocular-pane"
+                fitToWidth="true" vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+                maxWidth="650.0" maxHeight="650.0">
+        <content>
+            <GridPane fx:id="contentContainer" hgap="15" vgap="15" alignment="CENTER">
                 <padding>
-                    <Insets left="20.0" right="20.0" />
+                    <Insets top="20" bottom="20" left="20" right="20"/>
                 </padding>
-                <Label fx:id="dateLabel" text="Fecha" />
-                <Label fx:id="userDataLabel" text="Datos de Usuario" /> <HBox HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
-                <MenuButton fx:id="menuButton" text="☰" styleClass="menu-button"> <items>
-                    <MenuItem text="Cerrar Sesión" onAction="#handleCerrarSesion"/>
-                    <MenuItem text="Editar Perfil" onAction="#handleEditarPerfil"/>
-                    <MenuItem text="Modo sin conexión" onAction="#handleModoSinConexion"/>
-                    <MenuItem text="Acerca de..." onAction="#handleAcercaDe"/>
-                </items>
+            </GridPane>
+        </content>
+    </ScrollPane>
+
+    <!-- CAPA DE SUPERPOSICIÓN PARA CONTROLES -->
+    <AnchorPane pickOnBounds="false">
+        <!-- NAVEGACIÓN ORBITAL (AHORA CON COMBOBOX) -->
+        <VBox alignment="CENTER" spacing="10" AnchorPane.leftAnchor="50" AnchorPane.topAnchor="150">
+            <Label text="Seleccionar API:" styleClass="form-text"/>
+            <ComboBox fx:id="apiComboBox" prefWidth="150"/>
+            <Button text="Cargar API" onAction="#handleLoadSelectedApi" styleClass="form-button"/>
+        </VBox>
+        
+        <!-- Botones Favoritos y Reportes ajustados -->
+        <Label fx:id="btnFavoritos" text="★&#10;Favoritos" styleClass="celestial-button" AnchorPane.rightAnchor="50"
+               AnchorPane.topAnchor="180" onMouseClicked="#handleFilterFavoritos"/>
+
+        <Label fx:id="btnReports" text="Generar&#10;Reporte" styleClass="celestial-button" AnchorPane.rightAnchor="50"
+               AnchorPane.bottomAnchor="180" onMouseClicked="#handleReportsClick"/>
+
+        <!-- PANEL DE CONTROL INFERIOR -->
+        <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0"
+              AnchorPane.rightAnchor="0">
+            
+            <VBox fx:id="filterPane" spacing="10" alignment="CENTER"
+                  styleClass="filter-pane"
+                  visible="false" managed="false" maxWidth="500">
+                <padding>
+                    <Insets top="10" right="20" bottom="10" left="20"/>
+                </padding>
+                <GridPane hgap="10" vgap="10" alignment="CENTER">
+                    <Label text="Año Inicial:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="yearStartComboBox" prefWidth="120" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label text="Año Final:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <ComboBox fx:id="yearEndComboBox" prefWidth="120" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                </GridPane>
+                <Button text="Buscar" onAction="#handleAdvancedSearch" styleClass="form-button"/>
+            </VBox>
+
+            <VBox fx:id="progressBox" spacing="5" visible="false" managed="false" maxWidth="400" alignment="CENTER">
+                <Label fx:id="progressLabel" text="Generando reporte..."/>
+                <ProgressBar fx:id="progressBar" prefWidth="Infinity"/>
+            </VBox>
+            <TextField fx:id="searchField" promptText="Buscar en la fuente activa..." styleClass="search-field"
+                       maxWidth="400"/>
+            <HBox alignment="CENTER" spacing="30" prefHeight="40.0">
+                <Label fx:id="userDataLabel" text="Usuario: [nombre]" style="-fx-text-fill: #888;"/>
+                <MenuButton fx:id="menuButton" text="OPCIONES" styleClass="link-button">
+                    <items>
+                        <MenuItem text="Cerrar Sesión" onAction="#handleCerrarSesion"/>
+                        <MenuItem text="Editar Perfil" onAction="#handleEditarPerfil"/>
+                        <MenuItem text="Acerca de..." onAction="#handleAcercaDe"/>
+                    </items>
                 </MenuButton>
             </HBox>
-            </HBox>
-        </top>
-        <center>
-            <VBox alignment="TOP_CENTER" spacing="25.0" BorderPane.alignment="CENTER" styleClass="center-vbox">
-                <padding>
-                    <Insets top="30.0" left="20.0" right="20.0" bottom="20.0"/>
-                </padding>
-                <Label text="Explorador del Cosmos" styleClass="title"/>
+        </VBox>
+    </AnchorPane>
 
-                <HBox alignment="CENTER" spacing="10">
-                    <TextField fx:id="searchField" promptText="Buscar en el cosmos..." prefWidth="300.0"/> <Button text="Buscar" onAction="#handleSearch"/>
-                </HBox>
-
-                <HBox alignment="CENTER" styleClass="filter-bar">
-                    <Label fx:id="btnSpaceX" text="SpaceX" styleClass="api-label" onMouseClicked="#handleFilterSpaceX"/>
-                    <Label fx:id="btnSolarSystem" text="The Solar System" styleClass="api-label" onMouseClicked="#handleFilterSolar"/>
-                    <Label fx:id="btnPlanet" text="Planet" styleClass="api-label" onMouseClicked="#handleFilterPlanet"/>
-                    <Label fx:id="btnJamesWebb" text="James Webb" styleClass="api-label" onMouseClicked="#handleFilterWebb"/>
-                    <Label fx:id="btnFavoritos" text="★ Favoritos" styleClass="api-label" onMouseClicked="#handleFilterFavoritos"/>
-                </HBox>
-
-                <ScrollPane fx:id="contentScrollPane" fitToWidth="true" vbarPolicy="AS_NEEDED"
-                            hbarPolicy="NEVER" styleClass="reels-scroll-pane" VBox.vgrow="ALWAYS">
-
-                    <TilePane fx:id="contentContainer" hgap="15" vgap="15" prefColumns="4"> <padding>
-                        <Insets top="10" bottom="10" left="10" right="10" />
-                    </padding>
-                    </TilePane>
-                </ScrollPane>
-            </VBox>
-        </center>
-        <bottom>
-            <HBox alignment="CENTER" prefHeight="40.0" spacing="30.0" styleClass="bottom-bar" BorderPane.alignment="CENTER">
-                <Label text="Términos"/>
-                <Label text="Privacidad"/>
-                <Label text="Seguridad"/>
-                <Label text="Logo ITCelaya"/>
-                <Label text="Colaboradores GitHub"/>
-            </HBox>
-        </bottom>
-    </BorderPane>
-</AnchorPane>
+</StackPane>

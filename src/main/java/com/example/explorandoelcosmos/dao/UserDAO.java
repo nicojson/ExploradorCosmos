@@ -1,21 +1,15 @@
 package com.example.explorandoelcosmos.dao;
 
 import com.example.explorandoelcosmos.model.User;
-
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDAO {
-    /**
-     * Guarda un nuevo usuario en la base de datos.
-     * La contraseña ya debe estar hasheada.
-     * @param user El objeto User a guardar.
-     */
-    void save(User user);
-
-    /**
-     * Busca un usuario por su nombre de usuario.
-     * @param username El nombre de usuario a buscar.
-     * @return Un Optional que contiene el User si se encuentra, o un Optional vacío si no.
-     */
+    Optional<User> findById(int id);
     Optional<User> findByUsername(String username);
+    List<User> findAll();
+    void save(User user);
+    void update(User user);
+    void delete(int id);
+    boolean adminExists(); // Nuevo método
 }

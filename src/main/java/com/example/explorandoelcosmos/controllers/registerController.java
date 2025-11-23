@@ -4,82 +4,53 @@ import com.example.explorandoelcosmos.PasswordUtils;
 import com.example.explorandoelcosmos.dao.UserDAO;
 import com.example.explorandoelcosmos.dao.UserDAOImpl;
 import com.example.explorandoelcosmos.model.User;
+import com.example.explorandoelcosmos.service.NavigationService;
+import com.example.explorandoelcosmos.service.NotificationManager;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class registerController {
-    @FXML
-    private TextField newUserFld;
-    @FXML
-    private PasswordField newPasswordFld;
-    @FXML
-    private PasswordField confirmPasswordFld;
-    @FXML
-    private Button cancelBtn;
-    @FXML
-    private Button registerBtn;
+    @FXML private TextField newUserFld;
+    @FXML private PasswordField newPasswordFld;
+    @FXML private PasswordField confirmPasswordFld;
+
+    private final UserDAO userDAO = new UserDAOImpl();
 
     @FXML
-    protected void onCancelButtonClick() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/hello-view.fxml"));
-            Parent loginRoot = loader.load();
-            Scene scene = cancelBtn.getScene();
-            scene.setRoot(loginRoot);
-            Stage stage = (Stage) scene.getWindow();
-            stage.setTitle("Login");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    protected void onRegisterButtonClick() {
+    protected void onRegisterButtonClick(ActionEvent event) {
         String username = newUserFld.getText();
         String password = newPasswordFld.getText();
         String confirmPassword = confirmPasswordFld.getText();
 
-        if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error de registro", "Por favor, rellene todos los campos.");
+        if (username.isEmpty() || password.isEmpty()) {
+            NotificationManager.showError("Error de Registro", "Usuario y contraseña no pueden estar vacíos.");
             return;
         }
-
         if (!password.equals(confirmPassword)) {
-            showAlert(Alert.AlertType.ERROR, "Error de registro", "Las contraseñas no coinciden.");
+            NotificationManager.showError("Error de Registro", "Las contraseñas no coinciden.");
             return;
         }
-
-        UserDAO userDAO = new UserDAOImpl();
         if (userDAO.findByUsername(username).isPresent()) {
-            showAlert(Alert.AlertType.ERROR, "Error de registro", "El nombre de usuario ya existe.");
+            NotificationManager.showError("Error de Registro", "El nombre de usuario ya existe.");
             return;
         }
 
         String hashedPassword = PasswordUtils.hashPassword(password);
-        User newUser = new User(username, hashedPassword);
+        User newUser = new User(username, hashedPassword, username + "@example.com", "user");
         userDAO.save(newUser);
 
-        showAlert(Alert.AlertType.INFORMATION, "Registro exitoso", "Usuario registrado correctamente.");
-
-        // Volver a la vista de login
-        onCancelButtonClick();
+        NotificationManager.showSuccess("Registro Exitoso", "Usuario '" + username + "' registrado. Ahora puedes iniciar sesión.");
+        goToLogin(event);
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    @FXML
+    protected void onCancelButtonClick(ActionEvent event) {
+        goToLogin(event);
+    }
 
+    private void goToLogin(ActionEvent event) {
+        NavigationService.navigateTo(event, "/com/example/explorandoelcosmos/hello-view.fxml", "Acceso al Observatorio", null);
     }
 }

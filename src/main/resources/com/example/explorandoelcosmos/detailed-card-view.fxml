@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.DetailedCardController"
+      styleClass="detailed-card-view"
+      alignment="TOP_CENTER"
+      maxWidth="600.0" maxHeight="700.0">
+
+    <Pane fx:id="imagePane" styleClass="detailed-card-image-pane"/>
+
+    <VBox spacing="10" alignment="TOP_LEFT" VBox.vgrow="ALWAYS" style="-fx-padding: 20px;">
+        <Label fx:id="titleLabel" styleClass="detailed-card-title" text="Título del Detalle" wrapText="true"/>
+        
+        <!-- Incluimos el componente de acciones aquí -->
+        <fx:include fx:id="actions" source="actions-view.fxml"/>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 10 0 0 0;">
+            <Label fx:id="detailsLabel" styleClass="detailed-card-details" text="Aquí van todos los detalles..." wrapText="true"/>
+        </ScrollPane>
+    </VBox>
+
+    <Button text="CERRAR" onAction="#handleCloseClick" styleClass="form-button" style="-fx-margin-top: auto;"/>
+
+    <padding>
+        <Insets bottom="20.0"/>
+    </padding>
+</VBox>

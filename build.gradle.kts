@@ -14,7 +14,20 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
-val junitVersion = "5.12.1"
+// 1. Centralizar la Gestión de Versiones de Dependencias
+val sqliteJdbcVersion by extra { "3.51.0.0" }
+val jbcryptVersion by extra { "0.4" }
+val controlsfxVersion by extra { "11.1.2" }
+val ikonliVersion by extra { "12.3.1" }
+val retrofitVersion by extra { "2.11.0" }
+val okhttpVersion by extra { "4.12.0" }
+val gsonVersion by extra { "2.10.1" }
+val kotlinVersion by extra { "1.8.22" }
+val itextVersion by extra { "7.2.5" }
+val slf4jVersion by extra { "1.7.36" }
+val junitVersion by extra { "5.10.0" }
+val hikariCPVersion by extra { "5.1.0" }
+
 
 java {
     toolchain {
@@ -28,7 +41,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("com.example.explorandoelcosmos")
-    mainClass.set("com.example.explorandoelcosmos.HelloApplication")
+    mainClass.set("com.example.explorandoelcosmos.Launcher")
 }
 
 javafx {
@@ -37,20 +50,30 @@ javafx {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // Logging dependency
-    implementation("org.controlsfx:controlsfx:11.2.1")
-    implementation("org.kordamp.ikonli:ikonli-javafx:12.3.1")
-    implementation("org.mindrot:jbcrypt:0.4")
-    implementation("com.mysql:mysql-connector-j:8.0.33")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    // Todas las dependencias se añaden al classpath
+    implementation("org.xerial:sqlite-jdbc:$sqliteJdbcVersion")
+    implementation("org.mindrot:jbcrypt:$jbcryptVersion")
+    implementation("org.controlsfx:controlsfx:$controlsfxVersion")
+    implementation("org.kordamp.ikonli:ikonli-javafx:$ikonliVersion")
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttpVersion")
+    implementation("com.google.code.gson:gson:$gsonVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
+    // PDF Generation
+    implementation("com.itextpdf:kernel:$itextVersion")
+    implementation("com.itextpdf:layout:$itextVersion")
 
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    implementation("org.slf4j:slf4j-simple:$slf4jVersion")
+
+    // 2. Añadir HikariCP
+    implementation("com.zaxxer:HikariCP:$hikariCPVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 tasks.withType<Test> {

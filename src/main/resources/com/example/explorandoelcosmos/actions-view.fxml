@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.ActionsController"
+      styleClass="card-actions" alignment="CENTER" spacing="15">
+
+    <Button fx:id="favoriteButton" text="★" styleClass="card-button" onAction="#handleFavoriteClick"/>
+    <Button fx:id="shareButton" text="⮪" styleClass="card-button" onAction="#handleShareClick"/>
+
+</HBox>

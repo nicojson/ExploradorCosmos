@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.SetupController"
+      prefHeight="500.0" prefWidth="700.0"
+      alignment="CENTER" spacing="20.0"
+      styleClass="root" stylesheets="@styles.css">
+
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0"/>
+    </padding>
+
+    <Text text="[ CONFIGURACIÓN INICIAL ]" styleClass="title" style="-fx-font-size: 28px;"/>
+    <Label text="Bienvenido a Explorando el Cosmos. Por favor, crea la cuenta de administrador inicial."
+           style="-fx-text-fill: #aaa;" textAlignment="CENTER" wrapText="true" maxWidth="400"/>
+
+    <VBox spacing="20.0" maxWidth="350.0">
+        <TextField fx:id="adminUsernameField" promptText="Nombre de Usuario del Administrador"/>
+        <TextField fx:id="adminEmailField" promptText="Email del Administrador"/>
+        <PasswordField fx:id="adminPasswordField" promptText="Contraseña"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña"/>
+    </VBox>
+
+    <Button fx:id="createAdminButton" text="CREAR ADMINISTRADOR Y FINALIZAR" onAction="#handleCreateAdmin" styleClass="form-button" prefWidth="350.0"/>
+
+</VBox>

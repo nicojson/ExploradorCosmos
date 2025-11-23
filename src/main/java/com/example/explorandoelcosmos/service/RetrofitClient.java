@@ -4,18 +4,27 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
+    private static final long TIMEOUT_SECONDS = 15;
+
     private static HttpLoggingInterceptor createLogger() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // Set the desired log level. Use Level.BODY to see everything.
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         return logging;
     }
 
+    private static OkHttpClient.Builder createHttpClientBuilder() {
+        return new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+    }
+
     public static Retrofit getClient(String baseUrl) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        OkHttpClient.Builder httpClient = createHttpClientBuilder();
         httpClient.addInterceptor(createLogger());
 
         return new Retrofit.Builder()
@@ -26,10 +35,8 @@ public class RetrofitClient {
     }
 
     public static Retrofit getClient(String baseUrl, String headerName, String headerValue) {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        // Add the auth header first
+        OkHttpClient.Builder httpClient = createHttpClientBuilder();
         httpClient.addInterceptor(new HeaderInterceptor(headerName, headerValue));
-        // Then add the logger to see the final request
         httpClient.addInterceptor(createLogger());
 
         return new Retrofit.Builder()

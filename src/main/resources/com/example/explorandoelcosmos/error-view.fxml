@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      alignment="CENTER"
+      spacing="10"
+      style="-fx-background-color: #1c1c1c; -fx-border-color: #555; -fx-border-radius: 10; -fx-background-radius: 10;">
+    
+    <Label text="⚠️" style="-fx-font-size: 48px;"/>
+    <Label fx:id="errorMessageLabel" text="Error al cargar los datos." style="-fx-text-fill: #EAECEE; -fx-font-size: 16px;" wrapText="true" textAlignment="CENTER"/>
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</VBox>

@@ -1,9 +1,12 @@
 package com.example.explorandoelcosmos.model;
-import com.google.gson.annotations.SerializedName;
 
-// Un POJO (Plain Old Java Object) simple para almacenar los datos del lanzamiento.
-// Deberías añadir más campos según el schema.md (ej: docs/launches/v5/schema.md)
+import com.google.gson.annotations.SerializedName;
+import java.util.Date;
+
 public class Launch {
+
+    @SerializedName("id")
+    private String id;
 
     @SerializedName("name")
     private String name;
@@ -11,44 +14,20 @@ public class Launch {
     @SerializedName("flight_number")
     private int flightNumber;
 
+    @SerializedName("date_utc")
+    private Date dateUtc;
+
     @SerializedName("details")
     private String details;
 
-    @SerializedName("links")
-    private Links links;
+    @SerializedName("success")
+    private Boolean success;
 
-    // --- Getters y Setters ---
-
-    public String getName() {
-        return name;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(int flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    @Override
-    public String toString() {
-        return "Launch #" + flightNumber + ": " + name + "\nDetails: " + details;
-    }
+    // Getters
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getFlightNumber() { return flightNumber; }
+    public Date getDateUtc() { return dateUtc; }
+    public String getDetails() { return details; }
+    public Boolean isSuccess() { return success; }
 }
