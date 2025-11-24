@@ -64,4 +64,20 @@ public class User {
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(this.role);
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
 }

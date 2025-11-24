@@ -23,7 +23,7 @@
 .card-view {
     -fx-background-color: #1a1a1a;
     -fx-background-radius: 10px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 5);
     -fx-cursor: hand;
     -fx-transition: all 0.2s ease-in-out;
     -fx-pref-width: 180px;
@@ -75,7 +75,7 @@
 .detailed-card-view {
     -fx-background-color: #1c1c1c;
     -fx-background-radius: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 20, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 20, 0, 0, 0);
     -fx-border-color: #444;
     -fx-border-width: 1px;
     -fx-border-radius: 15px;
@@ -115,9 +115,19 @@
     -fx-background-radius: 325px;
     -fx-effect: dropshadow(gaussian, rgba(155, 89, 182, 0.3), 30, 0, 0, 0);
 }
-.ocular-pane .viewport { -fx-background-color: transparent; }
-.ocular-pane .scroll-bar:vertical, .ocular-pane .scroll-bar:horizontal { -fx-background-color: transparent; }
-.ocular-pane .scroll-bar .thumb { -fx-background-color: -fx-accent-purple; }
+
+.ocular-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.ocular-pane .scroll-bar:vertical,
+.ocular-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.ocular-pane .scroll-bar .thumb {
+    -fx-background-color: -fx-accent-purple;
+}
 
 .celestial-button {
     -fx-background-color: transparent;
@@ -157,6 +167,7 @@
     -fx-font-size: 18px;
     -fx-prompt-text-fill: #555;
 }
+
 .search-field:focused {
     -fx-border-color: -fx-accent-purple;
 }
@@ -170,6 +181,7 @@
     -fx-background-radius: 5px;
     -fx-cursor: hand;
 }
+
 .form-button:hover {
     -fx-effect: dropshadow(gaussian, -fx-accent-purple, 10, 0, 0, 0);
 }
@@ -190,4 +202,82 @@
     -fx-border-width: 1px 1px 0 1px;
     -fx-border-radius: 10 10 0 0;
     -fx-text-fill: -fx-text-color;
+}
+
+/* --- 7. Video Card Styles --- */
+.video-card-view {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 5);
+    -fx-cursor: hand;
+    -fx-pref-width: 300px;
+}
+
+.video-card-view:hover {
+    -fx-background-color: #2a2a2a;
+    -fx-effect: dropshadow(gaussian, -fx-accent-cyan, 15, 0, 0, 0);
+    -fx-translate-y: -2;
+}
+
+.video-thumbnail-pane {
+    -fx-pref-height: 168px;
+    /* 16:9 aspect ratio */
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-radius: 10px 10px 0 0;
+}
+
+.video-duration-label {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-text-fill: white;
+    -fx-padding: 2 5;
+    -fx-background-radius: 4;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-margin: 5;
+}
+
+.video-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.video-description {
+    -fx-font-size: 12px;
+    -fx-text-fill: #aaa;
+}
+
+.video-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #888;
+}
+
+/* --- 8. Post Card Styles --- */
+.post-card-view {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 10px;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 5);
+    -fx-cursor: hand;
+    -fx-pref-width: 300px;
+}
+
+.post-card-view:hover {
+    -fx-background-color: #2a2a2a;
+    -fx-effect: dropshadow(gaussian, -fx-accent-purple, 15, 0, 0, 0);
+}
+
+.post-avatar {
+    -fx-background-color: -fx-accent-purple;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-background-radius: 20px;
+    -fx-alignment: CENTER;
+    -fx-pref-height: 200px;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-radius: 8px;
 }

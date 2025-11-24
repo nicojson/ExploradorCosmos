@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.PostCardController"
+      styleClass="post-card-view"
+      spacing="10"
+      onMouseClicked="#handleCardClick">
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label styleClass="post-avatar" text="N"/>
+        <VBox>
+            <Label text="NASA" styleClass="post-author"/>
+            <Label fx:id="timeLabel" styleClass="post-date"/>
+        </VBox>
+    </HBox>
+
+    <Label fx:id="contentLabel" styleClass="post-content" wrapText="true"/>
+
+    <Pane fx:id="previewPane" styleClass="post-preview-pane"/>
+
+    <fx:include fx:id="actions" source="actions-view.fxml"/>
+
+</VBox>

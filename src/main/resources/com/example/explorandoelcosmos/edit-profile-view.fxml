@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.EditProfileController"
+      styleClass="root" stylesheets="@styles.css"
+      alignment="CENTER" spacing="20"
+      prefWidth="600" prefHeight="500">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <Label text="[ EDITAR PERFIL ]" styleClass="title"/>
+
+    <VBox spacing="15" maxWidth="400">
+        <Label text="Usuario" styleClass="form-text"/>
+        <TextField fx:id="usernameFld" styleClass="search-field"/>
+
+        <Label text="Correo Electrónico" styleClass="form-text"/>
+        <TextField fx:id="emailFld" styleClass="search-field"/>
+
+        <Label text="Fecha de Nacimiento" styleClass="form-text"/>
+        <DatePicker fx:id="dobFld" styleClass="search-field" maxWidth="Infinity"/>
+
+        <Label text="País" styleClass="form-text"/>
+        <TextField fx:id="countryFld" styleClass="search-field"/>
+
+        <Label text="Nueva Contraseña (Opcional)" styleClass="form-text"/>
+        <PasswordField fx:id="newPasswordFld" styleClass="search-field"/>
+
+        <Label text="Confirmar Contraseña" styleClass="form-text"/>
+        <PasswordField fx:id="confirmPasswordFld" styleClass="search-field"/>
+    </VBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Guardar Cambios" onAction="#handleSaveChanges" styleClass="form-button"/>
+        <Button text="Cancelar" onAction="#handleCancel" styleClass="link-button"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.VideoCardController"
+      styleClass="video-card-view"
+      spacing="5"
+      onMouseClicked="#handleCardClick">
+
+    <StackPane>
+        <Pane fx:id="thumbnailPane" styleClass="video-thumbnail-pane"/>
+        <Label fx:id="durationLabel" styleClass="video-duration-label" text="VIDEO" StackPane.alignment="BOTTOM_RIGHT"/>
+    </StackPane>
+
+    <VBox spacing="2" style="-fx-padding: 5 10 10 10;">
+        <Label fx:id="titleLabel" styleClass="video-title" wrapText="true"/>
+        <Label fx:id="dateLabel" styleClass="video-date"/>
+        <Label fx:id="descriptionLabel" styleClass="video-description" wrapText="true"/>
+    </VBox>
+
+    <fx:include fx:id="actions" source="actions-view.fxml"/>
+
+</VBox>

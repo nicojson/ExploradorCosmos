@@ -173,6 +173,10 @@ public class MainProgramController {
     }
 
     public void showDetailedView(String imageUrl, String title, String details) {
+        showDetailedView(imageUrl, title, details, null);
+    }
+
+    public void showDetailedView(String imageUrl, String title, String details, Publication publication) {
         try {
             if (overlay == null) {
                 overlay = new StackPane();
@@ -185,7 +189,7 @@ public class MainProgramController {
             detailedView = loader.load();
             DetailedCardController controller = loader.getController();
             controller.setMainController(this);
-            controller.setData(imageUrl, title, details);
+            controller.setData(imageUrl, title, details, publication);
 
             detailedView.setScaleX(0.8);
             detailedView.setScaleY(0.8);
