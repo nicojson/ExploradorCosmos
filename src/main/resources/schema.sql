@@ -1,5 +1,5 @@
 -- ExplorandoElCosmos Database Schema
--- Version 1.2: Removed default admin user creation. Admin is now created on first registration.
+-- Version 1.3: Added dob/country to Users, api_key/base_url to Api_Sources.
 
 -- Grupo 1: Gestión de Usuarios y Roles
 CREATE TABLE IF NOT EXISTS Roles (
@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS Users (
     username TEXT NOT NULL UNIQUE,
     hashed_password TEXT NOT NULL,
     email TEXT UNIQUE,
+    dob DATE,
+    country TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     role_id INTEGER NOT NULL,
     FOREIGN KEY (role_id) REFERENCES Roles(role_id)
@@ -26,30 +28,27 @@ CREATE TABLE IF NOT EXISTS User_Profiles (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
--- ... (el resto de las tablas CREATE TABLE permanecen igual) ...
+
+-- Grupo 2: Gestión de Publicaciones y Contenido
+CREATE TABLE IF NOT EXISTS Publications (
+    publication_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    content_url TEXT,
+    publication_date DATE,
+    source_id INTEGER,
+    is_favorite INTEGER DEFAULT 0,
+    local_path TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (source_id) REFERENCES Api_Sources(source_id)
+);
 
 CREATE TABLE IF NOT EXISTS Api_Sources (
     source_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source_name TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS Publications (
-    publication_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source_api_id INTEGER NOT NULL,
-    original_id_from_api TEXT,
-    content_type TEXT NOT NULL,
-    title TEXT NOT NULL,
-    main_image_url TEXT,
-    fetched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (source_api_id) REFERENCES Api_Sources(source_id)
-);
-
-CREATE TABLE IF NOT EXISTS Publication_Details (
-    detail_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    publication_id INTEGER NOT NULL,
-    detail_key TEXT NOT NULL,
-    detail_value TEXT,
-    FOREIGN KEY (publication_id) REFERENCES Publications(publication_id) ON DELETE CASCADE
+    source_name TEXT NOT NULL UNIQUE,
+    api_key TEXT,
+    base_url TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Tags (
@@ -142,4 +141,10 @@ CREATE TABLE IF NOT EXISTS Launch_Reports (
 
 -- Insertar datos iniciales y por defecto
 INSERT OR IGNORE INTO Roles (role_id, role_name) VALUES (1, 'admin'), (2, 'user'), (3, 'guest');
-INSERT OR IGNORE INTO Api_Sources (source_id, source_name) VALUES (1, 'SpaceX'), (2, 'JWST'), (3, 'NASA'), (4, 'Planet'), (5, 'SolarSystem');
+INSERT OR IGNORE INTO Api_Sources (source_id, source_name, base_url) VALUES 
+(1, 'SpaceX', 'https://api.spacexdata.com/v4'), 
+(2, 'JWST', 'https://api.jwstapi.com'), 
+(3, 'NASA', 'https://images-api.nasa.gov'), 
+(4, 'Planet', 'https://api.planet.com'), 
+(5, 'SolarSystem', 'https://api.le-systeme-solaire.net/rest'),
+(6, 'Astronomy API', 'https://api.astronomyapi.com');

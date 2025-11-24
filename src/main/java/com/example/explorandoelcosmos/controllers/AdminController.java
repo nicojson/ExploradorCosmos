@@ -19,25 +19,32 @@ import javafx.scene.layout.StackPane;
 import javafx.util.StringConverter;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 public class AdminController {
 
     // === FXML Fields para Gestión de API Keys ===
-    @FXML private ComboBox<ApiEndpointConfig> endpointComboBox;
-    @FXML private TextField endpointNameField;
-    @FXML private TextField apiKeyField;
-    @FXML private TextField appIdField;
-    @FXML private TextField appSecretField;
+    @FXML
+    private ComboBox<ApiEndpointConfig> endpointComboBox;
+    @FXML
+    private TextField endpointNameField;
+    @FXML
+    private TextField apiKeyField;
+    @FXML
+    private TextField baseUrlField;
 
     // === FXML Fields para Gestión de Usuarios ===
-    @FXML private TableView<User> userTableView;
-    @FXML private TableColumn<User, Integer> idColumn;
-    @FXML private TableColumn<User, String> usernameColumn;
-    @FXML private TableColumn<User, String> roleColumn;
-    @FXML private ComboBox<String> roleComboBox;
-    @FXML private StackPane userTablePane; // Para el indicador de carga de usuarios
+    @FXML
+    private TableView<User> userTableView;
+    @FXML
+    private TableColumn<User, Integer> idColumn;
+    @FXML
+    private TableColumn<User, String> usernameColumn;
+    @FXML
+    private TableColumn<User, String> roleColumn;
+    @FXML
+    private ComboBox<String> roleComboBox;
+    @FXML
+    private StackPane userTablePane; // Para el indicador de carga de usuarios
 
     private final ProgressIndicator loadingIndicator = new ProgressIndicator();
 
@@ -122,8 +129,10 @@ public class AdminController {
             }
         });
         task.setOnFailed(e -> {
-            String errorMessage = task.getException() != null ? task.getException().getMessage() : "Error desconocido al cargar configuraciones.";
-            NotificationManager.showError("Error", "No se pudieron cargar las configuraciones de endpoints: " + errorMessage);
+            String errorMessage = task.getException() != null ? task.getException().getMessage()
+                    : "Error desconocido al cargar configuraciones.";
+            NotificationManager.showError("Error",
+                    "No se pudieron cargar las configuraciones de endpoints: " + errorMessage);
             currentMessage = "Error al cargar configuraciones de endpoints: " + errorMessage;
         });
         new Thread(task).start();
@@ -152,16 +161,14 @@ public class AdminController {
     private void displayEndpointConfig(ApiEndpointConfig config) {
         endpointNameField.setText(config.getEndpointName());
         apiKeyField.setText(config.getApiKey());
-        appIdField.setText(config.getAppId());
-        appSecretField.setText(config.getAppSecret());
+        baseUrlField.setText(config.getBaseUrl());
         endpointNameField.setDisable(true); // No permitir cambiar el nombre de un endpoint existente
     }
 
     private void clearEndpointFields() {
         endpointNameField.setText("");
         apiKeyField.setText("");
-        appIdField.setText("");
-        appSecretField.setText("");
+        baseUrlField.setText("");
         endpointNameField.setDisable(false);
         currentMessage = "Campos de endpoint limpiados."; // Actualizar mensaje
     }
@@ -170,8 +177,7 @@ public class AdminController {
     private void handleSaveEndpoint() {
         String name = endpointNameField.getText().trim();
         String apiKey = apiKeyField.getText().trim();
-        String appId = appIdField.getText().trim();
-        String appSecret = appSecretField.getText().trim();
+        String baseUrl = baseUrlField.getText().trim();
 
         if (name.isEmpty()) {
             NotificationManager.showWarning("Datos Incompletos", "El nombre del endpoint no puede estar vacío.");
@@ -180,11 +186,9 @@ public class AdminController {
         }
 
         ApiEndpointConfig config = new ApiEndpointConfig(
-            name,
-            apiKey.isEmpty() ? null : apiKey,
-            appId.isEmpty() ? null : appId,
-            appSecret.isEmpty() ? null : appSecret
-        );
+                name,
+                apiKey.isEmpty() ? null : apiKey,
+                baseUrl.isEmpty() ? null : baseUrl);
 
         Task<Void> task = new Task<>() {
             @Override
@@ -199,7 +203,8 @@ public class AdminController {
             currentMessage = "Endpoint '" + name + "' guardado exitosamente."; // Actualizar mensaje
         });
         task.setOnFailed(e -> {
-            String errorMessage = task.getException() != null ? task.getException().getMessage() : "Error desconocido al guardar.";
+            String errorMessage = task.getException() != null ? task.getException().getMessage()
+                    : "Error desconocido al guardar.";
             NotificationManager.showError("Error", "No se pudo guardar la configuración del endpoint: " + errorMessage);
             currentMessage = "Error al guardar endpoint '" + name + "': " + errorMessage; // Actualizar mensaje
         });
@@ -215,7 +220,9 @@ public class AdminController {
             return;
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "¿Estás seguro de que quieres eliminar el endpoint '" + selectedConfig.getEndpointName() + "'?", ButtonType.YES, ButtonType.NO);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "¿Estás seguro de que quieres eliminar el endpoint '" + selectedConfig.getEndpointName() + "'?",
+                ButtonType.YES, ButtonType.NO);
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 Task<Void> task = new Task<>() {
@@ -226,15 +233,19 @@ public class AdminController {
                     }
                 };
                 task.setOnSucceeded(e -> {
-                    NotificationManager.showInfo("Eliminado", "Endpoint '" + selectedConfig.getEndpointName() + "' eliminado.");
+                    NotificationManager.showInfo("Eliminado",
+                            "Endpoint '" + selectedConfig.getEndpointName() + "' eliminado.");
                     loadEndpointConfigs(); // Recargar la lista de endpoints
                     clearEndpointFields();
-                    currentMessage = "Endpoint '" + selectedConfig.getEndpointName() + "' eliminado exitosamente."; // Actualizar mensaje
+                    currentMessage = "Endpoint '" + selectedConfig.getEndpointName() + "' eliminado exitosamente."; // Actualizar
+                                                                                                                    // mensaje
                 });
                 task.setOnFailed(e -> {
-                    String errorMessage = task.getException() != null ? task.getException().getMessage() : "Error desconocido al eliminar.";
+                    String errorMessage = task.getException() != null ? task.getException().getMessage()
+                            : "Error desconocido al eliminar.";
                     NotificationManager.showError("Error", "No se pudo eliminar el endpoint: " + errorMessage);
-                    currentMessage = "Error al eliminar endpoint '" + selectedConfig.getEndpointName() + "': " + errorMessage; // Actualizar mensaje
+                    currentMessage = "Error al eliminar endpoint '" + selectedConfig.getEndpointName() + "': "
+                            + errorMessage; // Actualizar mensaje
                 });
                 new Thread(task).start();
             } else {
@@ -267,7 +278,8 @@ public class AdminController {
 
         loadUsersTask.setOnFailed(event -> {
             showLoading(false);
-            String errorMessage = loadUsersTask.getException() != null ? loadUsersTask.getException().getMessage() : "Error desconocido al cargar usuarios.";
+            String errorMessage = loadUsersTask.getException() != null ? loadUsersTask.getException().getMessage()
+                    : "Error desconocido al cargar usuarios.";
             NotificationManager.showError("Error", "No se pudieron cargar los usuarios: " + errorMessage);
             currentMessage = "Error al cargar usuarios: " + errorMessage;
         });
@@ -296,12 +308,14 @@ public class AdminController {
         };
 
         deleteTask.setOnSucceeded(event -> {
-            NotificationManager.showInfo("Usuario Eliminado", "El usuario " + selectedUser.getUsername() + " ha sido eliminado.");
+            NotificationManager.showInfo("Usuario Eliminado",
+                    "El usuario " + selectedUser.getUsername() + " ha sido eliminado.");
             loadUsers(); // Recargar usuarios de forma asíncrona
         });
 
         deleteTask.setOnFailed(event -> {
-            String errorMessage = deleteTask.getException() != null ? deleteTask.getException().getMessage() : "Error desconocido al eliminar usuario.";
+            String errorMessage = deleteTask.getException() != null ? deleteTask.getException().getMessage()
+                    : "Error desconocido al eliminar usuario.";
             NotificationManager.showError("Error", "No se pudo eliminar el usuario: " + errorMessage);
             currentMessage = "Error al eliminar usuario: " + errorMessage;
         });
@@ -318,7 +332,8 @@ public class AdminController {
             return;
         }
 
-        User updatedUser = new User(selectedUser.getId(), selectedUser.getUsername(), selectedUser.getHashedPassword(), selectedUser.getEmail(), newRole);
+        User updatedUser = new User(selectedUser.getId(), selectedUser.getUsername(), selectedUser.getHashedPassword(),
+                selectedUser.getEmail(), selectedUser.getDob(), selectedUser.getCountry(), newRole);
 
         Task<Void> updateTask = new Task<>() {
             @Override
@@ -334,7 +349,8 @@ public class AdminController {
         });
 
         updateTask.setOnFailed(event -> {
-            String errorMessage = updateTask.getException() != null ? updateTask.getException().getMessage() : "Error desconocido al actualizar rol.";
+            String errorMessage = updateTask.getException() != null ? updateTask.getException().getMessage()
+                    : "Error desconocido al actualizar rol.";
             NotificationManager.showError("Error", "No se pudo actualizar el rol del usuario: " + errorMessage);
             currentMessage = "Error al actualizar rol: " + errorMessage;
         });
@@ -351,11 +367,13 @@ public class AdminController {
         };
 
         findAdminTask.setOnSucceeded(e -> {
-            NavigationService.navigateTo(event, "/com/example/explorandoelcosmos/mainProgram-view.fxml", "Explorando el Cosmos", findAdminTask.getValue());
+            NavigationService.navigateTo(event, "/com/example/explorandoelcosmos/mainProgram-view.fxml",
+                    "Explorando el Cosmos", findAdminTask.getValue());
         });
 
         findAdminTask.setOnFailed(e -> {
-            String errorMessage = findAdminTask.getException() != null ? findAdminTask.getException().getMessage() : "Error desconocido al navegar.";
+            String errorMessage = findAdminTask.getException() != null ? findAdminTask.getException().getMessage()
+                    : "Error desconocido al navegar.";
             NotificationManager.showError("Error", "No se pudo iniciar la navegación: " + errorMessage);
             currentMessage = "Error al navegar: " + errorMessage;
         });

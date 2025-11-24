@@ -13,10 +13,14 @@ import java.time.format.DateTimeFormatter;
 
 public class CardController {
 
-    @FXML private Pane imagePane;
-    @FXML private Label cardTitle;
-    @FXML private HBox actions; // El contenedor del include
-    @FXML private ActionsController actionsController; // El controlador inyectado
+    @FXML
+    private Pane imagePane;
+    @FXML
+    private Label cardTitle;
+    @FXML
+    private HBox actions; // El contenedor del include
+    @FXML
+    private ActionsController actionsController; // El controlador inyectado
 
     private MainProgramController mainController;
     private String imageUrl;
@@ -25,14 +29,21 @@ public class CardController {
 
     public void setup(Object data, MainProgramController mainController) {
         this.mainController = mainController;
-        
-        if (data instanceof Rocket rocket) {
-            this.imageUrl = rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty() ? rocket.getFlickrImages().get(0) : null;
+
+        if (data instanceof com.example.explorandoelcosmos.model.Publication publication) {
+            this.imageUrl = publication.getMainImageUrl();
+            this.title = publication.getTitle();
+            this.details = publication.getDescription();
+        } else if (data instanceof Rocket rocket) {
+            this.imageUrl = rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty()
+                    ? rocket.getFlickrImages().get(0)
+                    : null;
             this.title = rocket.getName();
             this.details = rocket.getDescription();
         } else if (data instanceof MoonPhaseResponse moonPhaseResponse) { // Manejo para Astronomy API
             this.imageUrl = moonPhaseResponse.getData() != null ? moonPhaseResponse.getData().getImageUrl() : null;
-            this.title = "Fase Lunar de Hoy (" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ")";
+            this.title = "Fase Lunar de Hoy (" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + ")";
             this.details = "Imagen generada por Astronomy API.";
         } else if (data instanceof NasaItem nasaItem) {
             this.imageUrl = nasaItem.getPreviewImageUrl();
@@ -45,8 +56,9 @@ public class CardController {
                 this.details = "Sin detalles disponibles.";
             }
         }
-        // Los modelos MarsPhoto, JamesWebbImage, PlanetFeature y CelestialBody ya no se usan directamente aquí
-        
+        // Los modelos MarsPhoto, JamesWebbImage, PlanetFeature y CelestialBody ya no se
+        // usan directamente aquí
+
         cardTitle.setText(title != null ? title : "Sin Título");
         if (imageUrl != null && !imageUrl.isEmpty()) {
             String style = String.format("-fx-background-image: url('%s');", imageUrl);

@@ -2,13 +2,13 @@ package com.example.explorandoelcosmos.controllers;
 
 import com.example.explorandoelcosmos.dao.AppConfigDAO;
 import com.example.explorandoelcosmos.dao.AppConfigDAOImpl;
+import com.example.explorandoelcosmos.dao.PublicationDAO;
+import com.example.explorandoelcosmos.dao.PublicationDAOImpl;
 import com.example.explorandoelcosmos.model.ApiEndpointConfig;
-import com.example.explorandoelcosmos.model.MoonPhaseResponse;
-import com.example.explorandoelcosmos.model.NasaItem;
-import com.example.explorandoelcosmos.model.Rocket;
+import com.example.explorandoelcosmos.model.Publication;
 import com.example.explorandoelcosmos.model.User;
-
 import com.example.explorandoelcosmos.service.AstronomyApiService;
+import com.example.explorandoelcosmos.service.JWSTService;
 import com.example.explorandoelcosmos.service.NasaLibraryService;
 import com.example.explorandoelcosmos.service.NotificationManager;
 import com.example.explorandoelcosmos.service.ReportService;
@@ -43,28 +43,41 @@ import java.util.stream.IntStream;
 public class MainProgramController {
 
     // === FXML Fields ===
-    @FXML private StackPane rootStackPane;
-    @FXML private ScrollPane contentScrollPane;
-    @FXML private GridPane contentContainer;
-    // Botones orbitales individuales eliminados, ahora se usa ComboBox
-    @FXML private Label btnFavoritos; // Este se mantiene
-    @FXML private Label userDataLabel;
-    @FXML private MenuButton menuButton;
-    @FXML private VBox progressBox;
-    @FXML private Label progressLabel;
-    @FXML private ProgressBar progressBar;
-    @FXML private TextField searchField;
+    @FXML
+    private StackPane rootStackPane;
+    @FXML
+    private ScrollPane contentScrollPane;
+    @FXML
+    private GridPane contentContainer;
+    @FXML
+    private Label btnFavoritos;
+    @FXML
+    private Label userDataLabel;
+    @FXML
+    private MenuButton menuButton;
+    @FXML
+    private VBox progressBox;
+    @FXML
+    private Label progressLabel;
+    @FXML
+    private ProgressBar progressBar;
+    @FXML
+    private TextField searchField;
 
     // New UX Search Fields
-    @FXML private VBox filterPane;
-    @FXML private ComboBox<Integer> yearStartComboBox;
-    @FXML private ComboBox<Integer> yearEndComboBox;
+    @FXML
+    private VBox filterPane;
+    @FXML
+    private ComboBox<Integer> yearStartComboBox;
+    @FXML
+    private ComboBox<Integer> yearEndComboBox;
 
     // Nuevo ComboBox para seleccionar APIs
-    @FXML private ComboBox<String> apiComboBox;
+    @FXML
+    private ComboBox<String> apiComboBox;
 
     // === Class Fields ===
-    private String activeEndpointName; // Ahora guardamos el nombre del endpoint activo
+    private String activeEndpointName;
     private Node detailedView;
     private Node overlay;
     private boolean isFilterPaneVisible = false;
@@ -73,17 +86,17 @@ public class MainProgramController {
     private final SpaceXDataService spaceXService = new SpaceXDataService();
     private final AstronomyApiService astronomyApiService = new AstronomyApiService();
     private final NasaLibraryService nasaLibraryService = new NasaLibraryService();
+    private final JWSTService jwstService = new JWSTService();
     private final ReportService reportService = new ReportService();
-    private final AppConfigDAO appConfigDAO = new AppConfigDAOImpl(); // Necesario para cargar nombres de endpoints
+    private final AppConfigDAO appConfigDAO = new AppConfigDAOImpl();
+    private final PublicationDAO publicationDAO = new PublicationDAOImpl();
 
     @FXML
     public void initialize() {
         setupOcularClip();
         setupSearchInteraction();
         setupFilterPane();
-        loadApiEndpointsIntoComboBox(); // Cargar los nombres de los endpoints
-        // No cargar nada por defecto, esperar la selección del usuario o cargar el primero
-        // handleFilterSpaceX(null); // Eliminado
+        loadApiEndpointsIntoComboBox();
     }
 
     private void setupOcularClip() {
@@ -102,19 +115,21 @@ public class MainProgramController {
         });
 
         rootStackPane.setOnMouseClicked(event -> {
-            if (isFilterPaneVisible && !filterPane.getBoundsInParent().contains(event.getX(), event.getY()) && !searchField.getBoundsInParent().contains(event.getX(), event.getY())) {
+            if (isFilterPaneVisible && !filterPane.getBoundsInParent().contains(event.getX(), event.getY())
+                    && !searchField.getBoundsInParent().contains(event.getX(), event.getY())) {
                 toggleFilterPane(false);
             }
         });
     }
 
     private void setupFilterPane() {
-        List<Integer> years = IntStream.rangeClosed(1920, LocalDate.now().getYear()).boxed().collect(Collectors.toList());
+        List<Integer> years = IntStream.rangeClosed(1920, LocalDate.now().getYear()).boxed()
+                .collect(Collectors.toList());
         yearStartComboBox.getItems().addAll(years);
         yearEndComboBox.getItems().addAll(years);
         yearStartComboBox.setValue(1920);
         yearEndComboBox.setValue(LocalDate.now().getYear());
-        
+
         filterPane.setTranslateY(150);
     }
 
@@ -143,7 +158,8 @@ public class MainProgramController {
             btnFavoritos.setManaged(false);
 
             MenuItem editarPerfil = findMenuItem(menuButton, "Editar Perfil");
-            if (editarPerfil != null) editarPerfil.setVisible(false);
+            if (editarPerfil != null)
+                editarPerfil.setVisible(false);
         }
     }
 
@@ -155,7 +171,7 @@ public class MainProgramController {
         }
         return null;
     }
-    
+
     public void showDetailedView(String imageUrl, String title, String details) {
         try {
             if (overlay == null) {
@@ -163,17 +179,18 @@ public class MainProgramController {
                 overlay.getStyleClass().add("overlay-pane");
                 overlay.setOnMouseClicked(event -> hideDetailedView());
             }
-            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/detailed-card-view.fxml"));
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/example/explorandoelcosmos/detailed-card-view.fxml"));
             detailedView = loader.load();
             DetailedCardController controller = loader.getController();
             controller.setMainController(this);
             controller.setData(imageUrl, title, details);
-            
+
             detailedView.setScaleX(0.8);
             detailedView.setScaleY(0.8);
             overlay.setOpacity(0);
-            
+
             rootStackPane.getChildren().addAll(overlay, detailedView);
 
             FadeTransition fadeOverlay = new FadeTransition(Duration.millis(200), overlay);
@@ -199,7 +216,7 @@ public class MainProgramController {
             ScaleTransition scaleView = new ScaleTransition(Duration.millis(200), detailedView);
             scaleView.setToX(0.8);
             scaleView.setToY(0.8);
-            
+
             FadeTransition fadeView = new FadeTransition(Duration.millis(200), detailedView);
             fadeView.setToValue(0);
 
@@ -216,13 +233,7 @@ public class MainProgramController {
         cardController.setup(data, this);
         return cardNode;
     }
-    
-    // Métodos handleFilter... eliminados, ahora se usa handleLoadSelectedApi
-    // @FXML private void handleFilterSpaceX(MouseEvent event) { ... }
-    // @FXML private void handleFilterApod(MouseEvent event) { ... }
-    // @FXML private void handleFilterNasaLibrary(MouseEvent event) { ... }
 
-    // Nuevo método para cargar los nombres de los endpoints en el ComboBox
     private void loadApiEndpointsIntoComboBox() {
         Task<List<ApiEndpointConfig>> task = new Task<>() {
             @Override
@@ -232,18 +243,18 @@ public class MainProgramController {
         };
         task.setOnSucceeded(e -> {
             ObservableList<String> endpointNames = FXCollections.observableArrayList(
-                task.getValue().stream()
-                    .map(ApiEndpointConfig::getEndpointName)
-                    .collect(Collectors.toList())
-            );
+                    task.getValue().stream()
+                            .map(ApiEndpointConfig::getEndpointName)
+                            .collect(Collectors.toList()));
             apiComboBox.setItems(endpointNames);
             if (!endpointNames.isEmpty()) {
                 apiComboBox.getSelectionModel().selectFirst();
-                activeEndpointName = apiComboBox.getSelectionModel().getSelectedItem(); // Establecer el primero como activo
-                loadDataForActiveFilter("", 0, 0); // Cargar datos del primer endpoint por defecto
+                activeEndpointName = apiComboBox.getSelectionModel().getSelectedItem();
+                loadDataForActiveFilter("", 0, 0);
             }
         });
-        task.setOnFailed(e -> NotificationManager.showError("Error", "No se pudieron cargar los nombres de los endpoints."));
+        task.setOnFailed(
+                e -> NotificationManager.showError("Error", "No se pudieron cargar los nombres de los endpoints."));
         new Thread(task).start();
     }
 
@@ -269,67 +280,70 @@ public class MainProgramController {
 
     private void loadDataForActiveFilter(String query, int yearStart, int yearEnd) {
         showLoadingSkeletons();
-        String filterName = activeEndpointName; // Usamos el endpoint activo
+        String filterName = activeEndpointName;
 
         loadInThread(() -> {
             try {
-                List<?> rawData;
-                // La lógica de carga ahora depende del nombre del endpoint activo
+                List<Publication> publications = new ArrayList<>();
+
                 switch (filterName) {
                     case "SpaceX":
-                        rawData = spaceXService.getRockets();
+                        publications.addAll(spaceXService.getRocketsAsPublications());
+                        publications.addAll(spaceXService.getLaunchesAsPublications());
                         break;
-                    case "Foto del Día": // Astronomy API
-                        MoonPhaseResponse moonPhase = astronomyApiService.getMoonPhase(LocalDate.now());
-                        rawData = new ArrayList<>();
-                        //if (moonPhase != null) rawData.add(moonPhase);
+                    case "JWST":
+                        publications.addAll(jwstService.getImagesAsPublications(1, 20));
                         break;
                     case "Biblioteca NASA":
-                        rawData = nasaLibraryService.searchImages(query, yearStart, yearEnd);
+                    case "NASA":
+                        publications.addAll(nasaLibraryService.searchImagesAsPublications(query, yearStart, yearEnd));
+                        break;
+                    case "Foto del Día": // Astronomy API
+                        // Implement mapping if needed
                         break;
                     default:
-                        rawData = new ArrayList<>();
-                        Platform.runLater(() -> NotificationManager.showWarning("API Desconocida", "El endpoint seleccionado no tiene una lógica de carga implementada."));
+                        Platform.runLater(() -> NotificationManager.showWarning("API Desconocida",
+                                "El endpoint seleccionado no tiene una lógica de carga implementada."));
                         break;
                 }
-                
-                List<?> filteredData = ("Biblioteca NASA".equals(filterName) || query.isEmpty()) ? rawData : filterData(rawData, query, yearStart, yearEnd);
-                
-                List<Node> cards = new ArrayList<>();
-                for(Object item : filteredData) cards.add(createCardNode(item));
-                updateGrid(cards);
+
+                List<Publication> filteredData = filterPublications(publications, query);
+
+                // CRITICAL FIX: Move UI creation to JavaFX thread
+                Platform.runLater(() -> {
+                    try {
+                        List<Node> cards = new ArrayList<>();
+                        for (Publication item : filteredData) {
+                            cards.add(createCardNode(item));
+                        }
+                        updateGridInternal(cards);
+                    } catch (IOException e) {
+                        handleApiError(filterName, e);
+                    }
+                });
             } catch (IOException e) {
                 handleApiError(filterName, e);
             }
         });
     }
-    
-    private List<?> filterData(List<?> data, String query, int yearStart, int yearEnd) {
+
+    private List<Publication> filterPublications(List<Publication> data, String query) {
         if (query.isEmpty()) {
             return data;
         }
         String lowerCaseQuery = query.toLowerCase();
         return data.stream()
-            .filter(item -> {
-                if (item instanceof Rocket rocket) {
-                    return rocket.getName().toLowerCase().contains(lowerCaseQuery) ||
-                           rocket.getDescription().toLowerCase().contains(lowerCaseQuery);
-                }
-                if (item instanceof MoonPhaseResponse moonPhaseResponse) {
-                    // No hay texto para filtrar directamente en MoonPhaseResponse
-                    return true;
-                }
-                // NasaItem ya se filtra en la llamada a la API, no aquí.
-                return false;
-            })
-            .collect(Collectors.toList());
+                .filter(item -> item.getTitle().toLowerCase().contains(lowerCaseQuery) ||
+                        (item.getDescription() != null && item.getDescription().toLowerCase().contains(lowerCaseQuery)))
+                .collect(Collectors.toList());
     }
 
     private void showLoadingSkeletons() {
         contentContainer.getChildren().clear();
         for (int i = 0; i < 9; i++) {
             try {
-                Node card = FXMLLoader.load(getClass().getResource("/com/example/explorandoelcosmos/loading-card-view.fxml"));
+                Node card = FXMLLoader
+                        .load(getClass().getResource("/com/example/explorandoelcosmos/loading-card-view.fxml"));
                 FadeTransition ft = new FadeTransition(Duration.seconds(0.8), card);
                 ft.setFromValue(1.0);
                 ft.setToValue(0.6);
@@ -346,30 +360,22 @@ public class MainProgramController {
     }
 
     private void updateGrid(List<Node> cards) {
-        Platform.runLater(() -> {
-            contentContainer.getChildren().clear();
-            if (cards.isEmpty()) {
-                NotificationManager.showInfo("Sin Resultados", "No se encontraron elementos que coincidan con la búsqueda.");
-            } else {
-                int columns = 3;
-                for (int i = 0; i < cards.size(); i++) {
-                    int row = i / columns;
-                    int col = i % columns;
-                    contentContainer.add(cards.get(i), col, row);
-                }
-            }
-        });
+        Platform.runLater(() -> updateGridInternal(cards));
     }
 
-    private void setActiveFilter(Label selectedButton) {
-        // Este método ya no se usa para los botones de API, pero se mantiene para otros filtros si los hubiera
-        // if (activeFilter != null) {
-        //     activeFilter.getStyleClass().remove("celestial-button-active");
-        // }
-        // if (selectedButton != null) {
-        //     selectedButton.getStyleClass().add("celestial-button-active");
-        //     activeFilter = selectedButton;
-        // }
+    private void updateGridInternal(List<Node> cards) {
+        contentContainer.getChildren().clear();
+        if (cards.isEmpty()) {
+            NotificationManager.showInfo("Sin Resultados",
+                    "No se encontraron elementos que coincidan con la búsqueda.");
+        } else {
+            int columns = 3;
+            for (int i = 0; i < cards.size(); i++) {
+                int row = i / columns;
+                int col = i % columns;
+                contentContainer.add(cards.get(i), col, row);
+            }
+        }
     }
 
     private void loadInThread(Runnable task) {
@@ -381,14 +387,43 @@ public class MainProgramController {
         e.printStackTrace();
         Platform.runLater(() -> {
             contentContainer.getChildren().clear();
-            NotificationManager.showError("Error de Red", "No se pudieron cargar los datos de " + apiName + ". " + e.getMessage());
+            NotificationManager.showError("Error de Red",
+                    "No se pudieron cargar los datos de " + apiName + ". " + e.getMessage());
         });
     }
 
-    public void handleCerrarSesion(ActionEvent actionEvent) {}
-    public void handleEditarPerfil(ActionEvent actionEvent) {}
-    public void handleAcercaDe(ActionEvent actionEvent) {}
-    public void handleFilterFavoritos(MouseEvent mouseEvent) { /* TODO */ }
+    public void handleCerrarSesion(ActionEvent actionEvent) {
+        // Implement logout logic
+    }
+
+    public void handleEditarPerfil(ActionEvent actionEvent) {
+        // Implement edit profile logic
+    }
+
+    public void handleAcercaDe(ActionEvent actionEvent) {
+        // Implement about logic
+    }
+
+    public void handleFilterFavoritos(MouseEvent mouseEvent) {
+        showLoadingSkeletons();
+        loadInThread(() -> {
+            List<Publication> favorites = publicationDAO.findFavorites();
+
+            // Move UI creation to JavaFX thread
+            Platform.runLater(() -> {
+                try {
+                    List<Node> cards = new ArrayList<>();
+                    for (Publication item : favorites) {
+                        cards.add(createCardNode(item));
+                    }
+                    updateGridInternal(cards);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    NotificationManager.showError("Error", "No se pudieron cargar los favoritos.");
+                }
+            });
+        });
+    }
 
     @FXML
     private void handleReportsClick(MouseEvent event) {
@@ -397,7 +432,7 @@ public class MainProgramController {
             return;
         }
 
-        String reportName = activeEndpointName; // Usamos el nombre del endpoint activo
+        String reportName = activeEndpointName;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Guardar Reporte PDF");
         fileChooser.setInitialFileName("Reporte_" + reportName.replace(" ", "_") + ".pdf");
@@ -415,12 +450,12 @@ public class MainProgramController {
                 updateProgress(0, 100);
 
                 List<?> data = fetchDataForReport(reportName);
-                
+
                 updateMessage("Generando archivo PDF...");
                 updateProgress(50, 100);
 
                 reportService.generatePdfReport("Reporte de " + reportName, data, file.getAbsolutePath());
-                
+
                 updateProgress(100, 100);
                 updateMessage("¡Reporte generado!");
                 return null;
@@ -430,7 +465,8 @@ public class MainProgramController {
         reportTask.setOnSucceeded(e -> {
             progressBox.setVisible(false);
             progressBox.setManaged(false);
-            NotificationManager.showSuccess("Éxito", "El reporte se ha guardado correctamente en:\n" + file.getAbsolutePath());
+            NotificationManager.showSuccess("Éxito",
+                    "El reporte se ha guardado correctamente en:\n" + file.getAbsolutePath());
         });
 
         reportTask.setOnFailed(e -> {
@@ -450,16 +486,20 @@ public class MainProgramController {
     }
 
     private List<?> fetchDataForReport(String endpointName) throws IOException {
-        return switch (endpointName) {
-            case "SpaceX" -> spaceXService.getRockets();
-            case "Foto del Día" -> {
-                MoonPhaseResponse moonPhase = astronomyApiService.getMoonPhase(LocalDate.now());
-                List<MoonPhaseResponse> moonPhases = new ArrayList<>();
-                if (moonPhase != null) moonPhases.add(moonPhase);
-                yield moonPhases;
-            }
-            case "Biblioteca NASA" -> nasaLibraryService.searchImages("", 0, 0); // Sin query ni años por defecto para el reporte
-            default -> new ArrayList<>();
-        };
+        List<Publication> publications = new ArrayList<>();
+        switch (endpointName) {
+            case "SpaceX":
+                publications.addAll(spaceXService.getRocketsAsPublications());
+                publications.addAll(spaceXService.getLaunchesAsPublications());
+                break;
+            case "JWST":
+                publications.addAll(jwstService.getImagesAsPublications(1, 20));
+                break;
+            case "Biblioteca NASA":
+            case "NASA":
+                publications.addAll(nasaLibraryService.searchImagesAsPublications("", 0, 0));
+                break;
+        }
+        return publications;
     }
 }

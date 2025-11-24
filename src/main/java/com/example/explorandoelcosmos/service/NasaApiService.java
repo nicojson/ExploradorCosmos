@@ -13,15 +13,13 @@ public interface NasaApiService {
 
     // Mars Rover Photos - ELIMINADO
 
-    // NASA Image and Video Library
+    // NASA Image and Video Library (Public API - No API key required)
     @GET("search")
     Call<NasaLibraryResponse> searchNasaLibrary(
             @Query("q") String query,
             @Query("media_type") String mediaType,
             @Query("year_start") Integer yearStart,
-            @Query("year_end") Integer yearEnd,
-            @Query("api_key") String apiKey
-    );
+            @Query("year_end") Integer yearEnd);
 
     // Astronomy API - Moon Phase
     @POST("api/v2/studio/moon-phase")

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
-    private static final long TIMEOUT_SECONDS = 15;
+    private static final long TIMEOUT_SECONDS = 30;
 
     private static HttpLoggingInterceptor createLogger() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

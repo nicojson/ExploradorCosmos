@@ -19,12 +19,18 @@ public class DatabaseManager {
     static {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(DB_URL);
-        // Configuraciones recomendadas para SQLite con HikariCP
+
+        // Configuraciones específicas para SQLite
+        config.setAutoCommit(true); // CRÍTICO: Habilitar autocommit para SQLite
         config.setConnectionTestQuery("SELECT 1");
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(5);
+        config.setMaximumPoolSize(1); // SQLite funciona mejor con pool size = 1
+        config.setMinimumIdle(1);
         config.setIdleTimeout(600000); // 10 minutos
         config.setConnectionTimeout(30000); // 30 segundos
+
+        // Propiedades adicionales para SQLite
+        config.addDataSourceProperty("journal_mode", "WAL");
+        config.addDataSourceProperty("synchronous", "NORMAL");
 
         dataSource = new HikariDataSource(config);
 
@@ -38,9 +44,10 @@ public class DatabaseManager {
     }
 
     private static void initializeDatabase() {
-        // Usamos try-with-resources para asegurar que la conexión se cierre y devuelva al pool
+        // Usamos try-with-resources para asegurar que la conexión se cierre y devuelva
+        // al pool
         try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             // Leer el archivo schema.sql desde los recursos
             InputStream inputStream = DatabaseManager.class.getClassLoader().getResourceAsStream("schema.sql");
@@ -49,7 +56,8 @@ public class DatabaseManager {
                 schemaSql = new BufferedReader(new InputStreamReader(inputStream))
                         .lines().collect(Collectors.joining("\n"));
             } else {
-                System.err.println("Advertencia: No se pudo encontrar el archivo schema.sql en los recursos. Se intentará crear solo la tabla api_endpoints.");
+                System.err.println(
+                        "Advertencia: No se pudo encontrar el archivo schema.sql en los recursos. Se intentará crear solo la tabla api_endpoints.");
             }
 
             // Separar y ejecutar sentencias del schema.sql
@@ -59,17 +67,17 @@ public class DatabaseManager {
                 }
             }
 
-            // Crear la tabla api_endpoints si no existe
-            String createApiEndpointsTableSql = """
-                CREATE TABLE IF NOT EXISTS api_endpoints (
-                    endpoint_name TEXT PRIMARY KEY NOT NULL,
-                    api_key TEXT,
-                    app_id TEXT,
-                    app_secret TEXT
-                );
-                """;
-            stmt.execute(createApiEndpointsTableSql);
-            
+            // La tabla api_endpoints es redundante con Api_Sources definida en schema.sql.
+            // Se ha eliminado su creación manual para evitar conflictos.
+
+            // Asegurar que los roles existen
+            stmt.execute(
+                    "INSERT OR IGNORE INTO Roles (role_id, role_name) VALUES (1, 'admin'), (2, 'user'), (3, 'guest')");
+
+            // Asegurar que las fuentes de API existen
+            stmt.execute(
+                    "INSERT OR IGNORE INTO Api_Sources (source_id, source_name, base_url) VALUES (1, 'SpaceX', 'https://api.spacexdata.com/v4'), (2, 'JWST', 'https://api.jwstapi.com'), (3, 'NASA', 'https://images-api.nasa.gov'), (4, 'Planet', 'https://api.planet.com'), (5, 'SolarSystem', 'https://api.le-systeme-solaire.net/rest')");
+
             System.out.println("Base de datos inicializada o ya existente, incluyendo la tabla api_endpoints.");
 
         } catch (SQLException e) {

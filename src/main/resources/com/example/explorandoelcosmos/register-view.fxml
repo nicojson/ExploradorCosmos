@@ -23,6 +23,9 @@
 
     <VBox spacing="20.0" maxWidth="350.0">
         <TextField fx:id="newUserFld" promptText="Asignar ID de Operador" styleClass="search-field"/>
+        <TextField fx:id="emailFld" promptText="Correo Electrónico" styleClass="search-field"/>
+        <javafx.scene.control.DatePicker fx:id="dobFld" promptText="Fecha de Nacimiento" maxWidth="Infinity" styleClass="search-field"/>
+        <TextField fx:id="countryFld" promptText="País" styleClass="search-field"/>
         <PasswordField fx:id="newPasswordFld" promptText="Definir Clave de Acceso" styleClass="search-field"/>
         <PasswordField fx:id="confirmPasswordFld" promptText="Confirmar Clave de Acceso" styleClass="search-field"/>
     </VBox>

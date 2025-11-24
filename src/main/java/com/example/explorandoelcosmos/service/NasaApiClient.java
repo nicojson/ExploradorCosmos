@@ -1,7 +1,5 @@
 package com.example.explorandoelcosmos.service;
 
-import com.example.explorandoelcosmos.dao.AppConfigDAO;
-import com.example.explorandoelcosmos.dao.AppConfigDAOImpl;
 import com.example.explorandoelcosmos.model.ApiEndpointConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,75 +18,85 @@ public class NasaApiClient {
     // URLs base de las APIs
     private static final String NASA_LIBRARY_BASE_URL = "https://images-api.nasa.gov/";
     private static final String ASTRONOMY_API_BASE_URL = "https://api.astronomyapi.com/";
+    private static final String JWST_API_BASE_URL = "https://api.jwstapi.com/";
 
     // Instancias de los servicios Retrofit
     private static NasaApiService nasaLibraryService;
     private static NasaApiService astronomyApiService;
+    private static JWSTApi jwstApiService;
 
-    // Claves de API (ahora se obtienen de ApiEndpointConfig)
+    // Claves de API (ahora se obtienen de ConfigLoader)
     private static String NASA_LIBRARY_API_KEY;
-    private static String ASTRONOMY_APP_ID;
-    private static String ASTRONOMY_APP_SECRET;
-
-    private static final AppConfigDAO appConfigDAO = new AppConfigDAOImpl();
+    private static String ASTRONOMY_API_KEY;
+    private static String JWST_API_KEY;
 
     // Método para obtener la API Key de la NASA Library
     public static String getNasaLibraryApiKey() {
         if (NASA_LIBRARY_API_KEY == null) {
-            Optional<ApiEndpointConfig> config = appConfigDAO.findEndpointConfigByName("Biblioteca NASA");
+            Optional<ApiEndpointConfig> config = ConfigLoader.getEndpointConfig("NASA");
             if (config.isPresent()) {
                 NASA_LIBRARY_API_KEY = config.get().getApiKey();
             }
             if (NASA_LIBRARY_API_KEY == null || NASA_LIBRARY_API_KEY.isEmpty()) {
-                System.err.println("ADVERTENCIA: API Key para 'Biblioteca NASA' no encontrada. Por favor, configúrala en el panel de administración.");
+                System.err.println(
+                        "ADVERTENCIA: API Key para 'NASA' no encontrada. Por favor, configúrala en el panel de administración.");
             }
         }
         return NASA_LIBRARY_API_KEY;
     }
 
-    // Métodos para obtener las credenciales de Astronomy API
-    public static String getAstronomyAppId() {
-        if (ASTRONOMY_APP_ID == null) {
-            Optional<ApiEndpointConfig> config = appConfigDAO.findEndpointConfigByName("Astronomy API");
+    // Método para obtener la API Key de Astronomy API (formato ID:Secret)
+    public static String getAstronomyApiKey() {
+        if (ASTRONOMY_API_KEY == null) {
+            Optional<ApiEndpointConfig> config = ConfigLoader.getEndpointConfig("Astronomy API");
             if (config.isPresent()) {
-                ASTRONOMY_APP_ID = config.get().getAppId();
+                ASTRONOMY_API_KEY = config.get().getApiKey();
             }
-            if (ASTRONOMY_APP_ID == null || ASTRONOMY_APP_ID.isEmpty()) {
-                System.err.println("ADVERTENCIA: Application ID para 'Astronomy API' no encontrado. Por favor, configúralo.");
+            if (ASTRONOMY_API_KEY == null || ASTRONOMY_API_KEY.isEmpty()) {
+                System.err.println(
+                        "ADVERTENCIA: API Key para 'Astronomy API' no encontrada. Por favor, configúrala (Formato ID:Secret) en el panel de administración.");
             }
         }
-        return ASTRONOMY_APP_ID;
+        return ASTRONOMY_API_KEY;
     }
 
-    public static String getAstronomyAppSecret() {
-        if (ASTRONOMY_APP_SECRET == null) {
-            Optional<ApiEndpointConfig> config = appConfigDAO.findEndpointConfigByName("Astronomy API");
+    // Método para obtener la API Key de JWST
+    public static String getJwstApiKey() {
+        if (JWST_API_KEY == null) {
+            Optional<ApiEndpointConfig> config = ConfigLoader.getEndpointConfig("JWST");
             if (config.isPresent()) {
-                ASTRONOMY_APP_SECRET = config.get().getAppSecret();
+                JWST_API_KEY = config.get().getApiKey();
             }
-            if (ASTRONOMY_APP_SECRET == null || ASTRONOMY_APP_SECRET.isEmpty()) {
-                System.err.println("ADVERTENCIA: Application Secret para 'Astronomy API' no encontrado. Por favor, configúralo.");
+            if (JWST_API_KEY == null || JWST_API_KEY.isEmpty()) {
+                System.err.println("ADVERTENCIA: API Key para 'JWST' no encontrada. Por favor, configúrala.");
             }
         }
-        return ASTRONOMY_APP_SECRET;
+        return JWST_API_KEY;
     }
 
     // Métodos para obtener las instancias de los servicios
     public static NasaApiService getNasaLibraryService() {
         if (nasaLibraryService == null) {
-            nasaLibraryService = createService(NASA_LIBRARY_BASE_URL);
+            nasaLibraryService = createService(NASA_LIBRARY_BASE_URL).create(NasaApiService.class);
         }
         return nasaLibraryService;
     }
 
     public static NasaApiService getAstronomyApiService() {
         if (astronomyApiService == null) {
-            astronomyApiService = createService(ASTRONOMY_API_BASE_URL);
+            astronomyApiService = createService(ASTRONOMY_API_BASE_URL).create(NasaApiService.class);
         }
         return astronomyApiService;
     }
 
-    private static NasaApiService createService(String baseUrl) {
+    public static JWSTApi getJwstApiService() {
+        if (jwstApiService == null) {
+            jwstApiService = createService(JWST_API_BASE_URL).create(JWSTApi.class);
+        }
+        return jwstApiService;
+    }
+
+    private static Retrofit createService(String baseUrl) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -100,10 +108,32 @@ public class NasaApiClient {
         // Añadir interceptor de autenticación Basic para Astronomy API
         if (ASTRONOMY_API_BASE_URL.equals(baseUrl)) {
             httpClientBuilder.addInterceptor(chain -> {
-                String credentials = Credentials.basic(getAstronomyAppId(), getAstronomyAppSecret());
+                String apiKey = getAstronomyApiKey();
+                String credentials;
+                if (apiKey != null && apiKey.contains(":")) {
+                    String[] parts = apiKey.split(":");
+                    credentials = Credentials.basic(parts[0], parts[1]);
+                } else {
+                    // Fallback or assume it's already a token
+                    credentials = apiKey != null ? apiKey : "";
+                }
+
                 Request original = chain.request();
                 Request request = original.newBuilder()
                         .header("Authorization", credentials)
+                        .method(original.method(), original.body())
+                        .build();
+                return chain.proceed(request);
+            });
+        }
+
+        // Añadir interceptor para JWST API Key
+        if (JWST_API_BASE_URL.equals(baseUrl)) {
+            httpClientBuilder.addInterceptor(chain -> {
+                String apiKey = getJwstApiKey();
+                Request original = chain.request();
+                Request request = original.newBuilder()
+                        .header("X-API-KEY", apiKey != null ? apiKey : "")
                         .method(original.method(), original.body())
                         .build();
                 return chain.proceed(request);
@@ -114,13 +144,11 @@ public class NasaApiClient {
                 .setLenient()
                 .create();
 
-        Retrofit retrofit = new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(httpClientBuilder.build())
                 .build();
-
-        return retrofit.create(NasaApiService.class);
     }
 
     // Este método ahora devuelve la clave de la Biblioteca NASA

@@ -26,6 +26,8 @@
     <VBox spacing="20.0" maxWidth="350.0">
         <TextField fx:id="adminUsernameField" promptText="Nombre de Usuario del Administrador"/>
         <TextField fx:id="adminEmailField" promptText="Email del Administrador"/>
+        <javafx.scene.control.DatePicker fx:id="adminDobField" promptText="Fecha de Nacimiento" maxWidth="Infinity" editable="false"/>
+        <TextField fx:id="adminCountryField" promptText="País"/>
         <PasswordField fx:id="adminPasswordField" promptText="Contraseña"/>
         <PasswordField fx:id="confirmPasswordField" promptText="Confirmar Contraseña"/>
     </VBox>

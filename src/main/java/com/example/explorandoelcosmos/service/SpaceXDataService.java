@@ -53,4 +53,48 @@ public class SpaceXDataService {
         }
         return response.body();
     }
+
+    // === Métodos de Mapeo a Publication ===
+
+    public List<com.example.explorandoelcosmos.model.Publication> getRocketsAsPublications() throws IOException {
+        List<Rocket> rockets = getRockets();
+        return rockets.stream().map(this::mapRocketToPublication).collect(Collectors.toList());
+    }
+
+    public List<com.example.explorandoelcosmos.model.Publication> getLaunchesAsPublications() throws IOException {
+        List<Launch> launches = getAllLaunches();
+        return launches.stream().map(this::mapLaunchToPublication).collect(Collectors.toList());
+    }
+
+    private com.example.explorandoelcosmos.model.Publication mapRocketToPublication(Rocket rocket) {
+        String imageUrl = (rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty())
+                ? rocket.getFlickrImages().get(0)
+                : null;
+
+        return new com.example.explorandoelcosmos.model.Publication(
+                1, // Assuming ID 1 for SpaceX
+                rocket.getName(), // Using name as ID since API doesn't provide ID for rockets in this model
+                "image",
+                rocket.getName(),
+                rocket.getDescription(),
+                imageUrl,
+                java.time.LocalDateTime.now() // Rockets don't have a specific date in this model
+        );
+    }
+
+    private com.example.explorandoelcosmos.model.Publication mapLaunchToPublication(Launch launch) {
+        java.time.LocalDateTime date = launch.getDateUtc() != null
+                ? launch.getDateUtc().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
+                : java.time.LocalDateTime.now();
+
+        return new com.example.explorandoelcosmos.model.Publication(
+                1, // Assuming ID 1 for SpaceX
+                launch.getId(),
+                "article", // Launches are more like articles/reports
+                launch.getName(),
+                launch.getDetails(),
+                null, // Launches might not have a direct image in this simple model, or we need to
+                      // fetch it
+                date);
+    }
 }

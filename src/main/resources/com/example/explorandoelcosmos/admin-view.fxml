@@ -38,11 +38,8 @@
                         <Label text="API Key (si aplica):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                         <TextField fx:id="apiKeyField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="App ID (si aplica):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextField fx:id="appIdField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-
-                        <Label text="App Secret (si aplica):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                        <TextField fx:id="appSecretField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        <Label text="Base URL (si aplica):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="baseUrlField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
                     </GridPane>
 
                     <HBox spacing="10" alignment="CENTER_LEFT">

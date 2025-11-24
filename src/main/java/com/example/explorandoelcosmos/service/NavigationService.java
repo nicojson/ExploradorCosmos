@@ -15,15 +15,24 @@ public class NavigationService {
 
     /**
      * Método centralizado y robusto para cambiar de escena.
-     * @param event El evento de acción (de un botón) que disparó la navegación. Se usa para obtener el Stage.
+     * 
+     * @param event    El evento de acción (de un botón) que disparó la navegación.
+     *                 Se usa para obtener el Stage.
      * @param fxmlPath La ruta al nuevo archivo FXML.
-     * @param title El nuevo título de la ventana.
-     * @param userData El usuario para la sesión (puede ser null para invitados o vistas no autenticadas).
+     * @param title    El nuevo título de la ventana.
+     * @param userData El usuario para la sesión (puede ser null para invitados o
+     *                 vistas no autenticadas).
      */
     public static void navigateTo(ActionEvent event, String fxmlPath, String title, User userData) {
+        navigateTo((Node) event.getSource(), fxmlPath, title, userData);
+    }
+
+    /**
+     * Sobrecarga para aceptar un Node directamente (útil cuando no hay ActionEvent,
+     * e.g., Platform.runLater)
+     */
+    public static void navigateTo(Node sourceNode, String fxmlPath, String title, User userData) {
         try {
-            // Forma robusta de obtener el Stage desde el evento de origen
-            Node sourceNode = (Node) event.getSource();
             Stage stage = (Stage) sourceNode.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(NavigationService.class.getResource(fxmlPath));
