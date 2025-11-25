@@ -62,6 +62,7 @@ dependencies {
     implementation("com.google.code.gson:gson:$gsonVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 
+
     // PDF Generation
     implementation("com.itextpdf:kernel:$itextVersion")
     implementation("com.itextpdf:layout:$itextVersion")
@@ -74,6 +75,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    implementation("com.mysql:mysql-connector-j:9.4.0")
 }
 
 tasks.withType<Test> {

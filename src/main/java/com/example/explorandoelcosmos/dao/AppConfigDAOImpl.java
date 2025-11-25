@@ -50,11 +50,12 @@ public class AppConfigDAOImpl implements AppConfigDAO {
 
     @Override
     public void save(String key, String value) {
-        // "UPSERT" logic: UPDATE if key exists, INSERT otherwise.
+        // SINTAXIS MYSQL: ON DUPLICATE KEY UPDATE
         String sql = "INSERT INTO App_Config (config_key, config_value) VALUES (?, ?) " +
-                "ON CONFLICT(config_key) DO UPDATE SET config_value = excluded.config_value";
+                "ON DUPLICATE KEY UPDATE config_value = VALUES(config_value)";
+
         try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, key);
             pstmt.setString(2, value);
             pstmt.executeUpdate();
@@ -63,14 +64,15 @@ public class AppConfigDAOImpl implements AppConfigDAO {
         }
     }
 
-    // === Implementación de los nuevos métodos para ApiEndpointConfig ===
 
     @Override
     public void saveEndpointConfig(ApiEndpointConfig config) {
+        // SINTAXIS MYSQL
         String sql = "INSERT INTO Api_Sources (source_name, api_key, base_url) VALUES (?, ?, ?) " +
-                "ON CONFLICT(source_name) DO UPDATE SET api_key = excluded.api_key, base_url = excluded.base_url";
+                "ON DUPLICATE KEY UPDATE api_key = VALUES(api_key), base_url = VALUES(base_url)";
+
         try (Connection conn = DatabaseManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, config.getEndpointName());
             pstmt.setString(2, config.getApiKey());
             pstmt.setString(3, config.getBaseUrl());

@@ -141,7 +141,7 @@ public class PublicationDAOImpl implements PublicationDAO {
 
     private Publication mapResultSetToPublication(ResultSet rs) throws SQLException {
         Publication publication = new Publication();
-        publication.setId(rs.getInt("id"));
+        publication.setId(rs.getInt("publication_id"));
         publication.setSourceApiId(rs.getInt("source_api_id"));
         publication.setOriginalIdFromApi(rs.getString("original_id_from_api"));
         publication.setContentType(rs.getString("content_type"));

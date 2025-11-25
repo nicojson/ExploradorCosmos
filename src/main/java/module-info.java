@@ -9,7 +9,6 @@ module com.example.explorandoelcosmos {
     requires java.sql;
     requires org.xerial.sqlitejdbc;
     requires jbcrypt;
-
     // UI additional controls
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;

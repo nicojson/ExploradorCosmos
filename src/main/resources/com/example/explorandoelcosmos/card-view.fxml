@@ -4,6 +4,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Pane?>
 
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.explorandoelcosmos.controllers.CardController"
@@ -12,7 +14,9 @@
       spacing="10"
       onMouseClicked="#handleCardClick">
 
-    <Pane fx:id="imagePane" styleClass="card-image-pane"/>
+    <StackPane styleClass="card-image-pane" prefHeight="120.0">
+        <ImageView fx:id="imageView" fitHeight="120.0" fitWidth="180.0" preserveRatio="false"/>
+    </StackPane>
     <Label fx:id="cardTitle" styleClass="card-title" text="Título de la Imagen" wrapText="true"/>
 
     <!-- Incluimos el componente de acciones -->
