@@ -4,6 +4,7 @@ module com.example.explorandoelcosmos {
     requires javafx.fxml;
     requires transitive javafx.base;
     requires transitive javafx.graphics;
+    requires javafx.media;
 
     // Database and utilities
     requires java.sql;

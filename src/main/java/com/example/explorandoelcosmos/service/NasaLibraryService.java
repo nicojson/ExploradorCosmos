@@ -121,6 +121,29 @@ public class NasaLibraryService {
     /**
      * Maps a NasaItem to a Publication object for consistent UI display
      */
+    /**
+     * Get asset manifest (video URLs)
+     */
+    public com.example.explorandoelcosmos.model.NasaAsset getAsset(String nasaId) throws IOException {
+        Response<com.example.explorandoelcosmos.model.NasaAsset> response = nasaApiService.getAsset(nasaId).execute();
+        if (response.isSuccessful()) {
+            return response.body();
+        }
+        return null;
+    }
+
+    /**
+     * Get asset metadata
+     */
+    public com.example.explorandoelcosmos.model.NasaMetadata getMetadata(String nasaId) throws IOException {
+        Response<com.example.explorandoelcosmos.model.NasaMetadata> response = nasaApiService.getMetadata(nasaId)
+                .execute();
+        if (response.isSuccessful()) {
+            return response.body();
+        }
+        return null;
+    }
+
     private com.example.explorandoelcosmos.model.Publication mapNasaItemToPublication(NasaItem item) {
         if (item.getData() == null || item.getData().isEmpty()) {
             return null;
