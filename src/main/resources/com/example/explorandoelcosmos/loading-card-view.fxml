@@ -7,18 +7,14 @@
 <VBox xmlns="http://javafx.com/javafx"
       styleClass="card-view"
       alignment="TOP_CENTER"
-      spacing="10">
+      maxWidth="180.0"
+      spacing="8">
 
-    <!-- Marcador de posición para la imagen -->
-    <Region styleClass="loading-placeholder" prefHeight="120.0"/>
-
-    <!-- Marcador de posición para el título -->
-    <Region styleClass="loading-placeholder" prefHeight="15.0" maxWidth="140.0"/>
-
-    <!-- Marcador de posición para los botones -->
-    <Region styleClass="loading-placeholder" prefHeight="20.0" maxWidth="80.0"/>
+    <Region styleClass="loading-placeholder" prefHeight="100.0" maxWidth="160.0"/>
+    <Region styleClass="loading-placeholder" prefHeight="12.0" maxWidth="120.0"/>
+    <Region styleClass="loading-placeholder" prefHeight="18.0" maxWidth="60.0"/>
 
     <padding>
-        <Insets bottom="10.0"/>
+        <Insets bottom="8.0" top="8.0" left="8.0" right="8.0"/>
     </padding>
 </VBox>

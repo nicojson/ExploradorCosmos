@@ -54,7 +54,7 @@ public class VideoCardController {
     private void handleCardClick() {
         if (mainController != null) {
             mainController.showDetailedView(publication.getMainImageUrl(), publication.getTitle(),
-                    publication.getDescription(), publication);
+                    publication.getDescription(), publication.getContentUrl());
         }
     }
 }

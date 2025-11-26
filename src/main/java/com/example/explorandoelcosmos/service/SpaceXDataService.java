@@ -12,6 +12,16 @@ import java.util.stream.Collectors;
 public class SpaceXDataService {
 
     private static final String API_BASE_URL = "https://api.spacexdata.com/v4/";
+
+    private static final String[] GENERIC_IMAGES = {
+            "https://live.staticflickr.com/65535/49673373182_93a517e140_b.jpg",
+            "https://live.staticflickr.com/65535/51702654584_13a4b39655_b.jpg",
+            "https://live.staticflickr.com/65535/50065947263_e1a6ea1e22_b.jpg",
+            "https://live.staticflickr.com/65535/51818737408_435196f856_b.jpg",
+            "https://live.staticflickr.com/65535/51981688502_0584ac5658_b.jpg",
+            "https://live.staticflickr.com/65535/51136761295_edb4d3ba1d_b.jpg"
+    };
+
     private final SpaceXApi spaceXApi;
 
     public SpaceXDataService() {
@@ -23,25 +33,15 @@ public class SpaceXDataService {
         Response<List<Rocket>> response = call.execute();
 
         if (!response.isSuccessful()) {
-            throw new IOException("Error en la API de SpaceX. Código de estado: " + response.code());
+            throw new IOException("Error: " + response.code());
         }
-
-        List<Rocket> rockets = response.body();
-
-        if (rockets == null || rockets.isEmpty()) {
-            throw new IOException("No se encontraron cohetes.");
-        }
-
-        // Filtrar cohetes que no tienen imágenes para evitar tarjetas vacías
-        return rockets.stream()
-                .filter(rocket -> rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty())
-                .collect(Collectors.toList());
+        return response.body();
     }
 
     public Launch getLatestLaunch() throws IOException {
         Response<Launch> response = spaceXApi.getLatestLaunch().execute();
         if (!response.isSuccessful() || response.body() == null) {
-            throw new IOException("Error al obtener el último lanzamiento: " + response.code());
+            throw new IOException("Error: " + response.code());
         }
         return response.body();
     }
@@ -49,36 +49,46 @@ public class SpaceXDataService {
     public List<Launch> getAllLaunches() throws IOException {
         Response<List<Launch>> response = spaceXApi.getAllLaunches().execute();
         if (!response.isSuccessful() || response.body() == null) {
-            throw new IOException("Error al obtener el historial de lanzamientos: " + response.code());
+            throw new IOException("Error: " + response.code());
         }
         return response.body();
     }
 
-    // === Métodos de Mapeo a Publication ===
-
     public List<com.example.explorandoelcosmos.model.Publication> getRocketsAsPublications() throws IOException {
         List<Rocket> rockets = getRockets();
+        if (rockets == null) return java.util.Collections.emptyList();
         return rockets.stream().map(this::mapRocketToPublication).collect(Collectors.toList());
     }
 
     public List<com.example.explorandoelcosmos.model.Publication> getLaunchesAsPublications() throws IOException {
         List<Launch> launches = getAllLaunches();
+        if (launches == null) return java.util.Collections.emptyList();
         return launches.stream().map(this::mapLaunchToPublication).collect(Collectors.toList());
     }
 
     private com.example.explorandoelcosmos.model.Publication mapRocketToPublication(Rocket rocket) {
-        String imageUrl = (rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty())
-                ? rocket.getFlickrImages().get(0)
-                : null;
+        String imageUrl = null;
+
+        if (rocket.getFlickrImages() != null && !rocket.getFlickrImages().isEmpty()) {
+            imageUrl = rocket.getFlickrImages().get(0);
+        }
+
+        if ("Falcon 1".equals(rocket.getName())) {
+            imageUrl = "https://live.staticflickr.com/65535/49673373182_93a517e140_b.jpg";
+        }
+
+        if (imageUrl == null) {
+            imageUrl = GENERIC_IMAGES[0];
+        }
 
         return new com.example.explorandoelcosmos.model.Publication(
-                1, // Assuming ID 1 for SpaceX
-                rocket.getName(), // Using name as ID since API doesn't provide ID for rockets in this model
+                1,
+                rocket.getName(),
                 "image",
                 rocket.getName(),
                 rocket.getDescription(),
                 imageUrl,
-                java.time.LocalDateTime.now() // Rockets don't have a specific date in this model
+                java.time.LocalDateTime.now()
         );
     }
 
@@ -87,14 +97,50 @@ public class SpaceXDataService {
                 ? launch.getDateUtc().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
                 : java.time.LocalDateTime.now();
 
-        return new com.example.explorandoelcosmos.model.Publication(
-                1, // Assuming ID 1 for SpaceX
+        String imageUrl = null;
+
+        if (launch.getLinks() != null
+                && launch.getLinks().getFlickr() != null
+                && launch.getLinks().getFlickr().getOriginal() != null
+                && !launch.getLinks().getFlickr().getOriginal().isEmpty()) {
+
+            imageUrl = launch.getLinks().getFlickr().getOriginal().get(0);
+        }
+
+        if (imageUrl == null
+                && launch.getLinks() != null
+                && launch.getLinks().getPatch() != null) {
+
+            imageUrl = launch.getLinks().getPatch().getLarge();
+        }
+
+        if ("Falcon 1".equals(launch.getName())) {
+            imageUrl = "https://live.staticflickr.com/65535/49673373182_93a517e140_b.jpg";
+        }
+
+        if (imageUrl == null) {
+            int index = Math.abs(launch.getId().hashCode()) % GENERIC_IMAGES.length;
+            imageUrl = GENERIC_IMAGES[index];
+        }
+
+        com.example.explorandoelcosmos.model.Publication pub = new com.example.explorandoelcosmos.model.Publication(
+                1,
                 launch.getId(),
-                "article", // Launches are more like articles/reports
+                "image",
                 launch.getName(),
-                launch.getDetails(),
-                null, // Launches might not have a direct image in this simple model, or we need to
-                      // fetch it
+                launch.getDetails() != null ? launch.getDetails() : "Lanzamiento sin descripción detallada.",
+                imageUrl,
                 date);
+
+        if (launch.getLinks() != null && launch.getLinks().getWebcast() != null) {
+            pub.setContentType("video");
+            String videoUrl = launch.getLinks().getWebcast();
+            if (videoUrl.contains("watch?v=")) {
+                videoUrl = videoUrl.replace("watch?v=", "embed/");
+            }
+            pub.setContentUrl(videoUrl);
+        }
+
+        return pub;
     }
 }

@@ -4,13 +4,10 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.web.WebView?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
@@ -19,48 +16,14 @@
       alignment="TOP_CENTER"
       maxWidth="600.0" maxHeight="700.0">
 
-    <StackPane fx:id="mediaContainer" styleClass="detailed-card-image-container">
-        <Pane fx:id="imagePane" styleClass="detailed-card-image-pane"/>
-        <MediaView fx:id="mediaView" visible="false" managed="false" fitWidth="560" fitHeight="315"/>
-        <Button fx:id="playButton" text="▶" styleClass="play-button" onAction="#handlePlayClick" visible="false"/>
-        <ProgressIndicator fx:id="loadingIndicator" visible="false" managed="false" maxWidth="40" maxHeight="40"/>
+    <StackPane styleClass="detailed-card-image-pane" prefHeight="350.0">
+        <Pane fx:id="imagePane" styleClass="detailed-card-image-pane" prefHeight="350.0" />
+        <WebView fx:id="videoWebView" visible="false" prefHeight="350.0"/>
     </StackPane>
-
-    <!-- Video Controls Panel (YouTube-style) -->
-    <VBox fx:id="videoControlsPanel" styleClass="video-controls-panel" visible="false" managed="false" spacing="8" style="-fx-padding: 10;">
-        <!-- Progress Bar Row -->
-        <HBox alignment="CENTER" spacing="10">
-            <Label fx:id="currentTimeLabel" styleClass="video-time-label" text="0:00"/>
-            <Slider fx:id="progressSlider" styleClass="video-progress-slider" min="0" max="100" value="0" HBox.hgrow="ALWAYS"/>
-            <Label fx:id="totalTimeLabel" styleClass="video-time-label" text="0:00"/>
-        </HBox>
-        
-        <!-- Control Buttons Row -->
-        <HBox alignment="CENTER_LEFT" spacing="15">
-            <!-- Play/Pause -->
-            <Button fx:id="playPauseButton" text="▶" styleClass="video-control-button" onAction="#handlePlayPauseClick"/>
-            
-            <!-- Volume Controls -->
-            <HBox alignment="CENTER" spacing="5">
-                <Button fx:id="muteButton" text="🔊" styleClass="video-control-button" onAction="#handleMuteToggle"/>
-                <Slider fx:id="volumeSlider" styleClass="video-volume-slider" min="0" max="100" value="100" prefWidth="80"/>
-            </HBox>
-            
-            <!-- Spacer -->
-            <Pane HBox.hgrow="ALWAYS"/>
-            
-            <!-- Speed Control (Optional) -->
-            <Label fx:id="speedLabel" styleClass="video-control-label" text="1x"/>
-            
-            <!-- Fullscreen -->
-            <Button fx:id="fullscreenButton" text="⛶" styleClass="video-control-button" onAction="#handleFullscreenClick"/>
-        </HBox>
-    </VBox>
 
     <VBox spacing="10" alignment="TOP_LEFT" VBox.vgrow="ALWAYS" style="-fx-padding: 20px;">
         <Label fx:id="titleLabel" styleClass="detailed-card-title" text="Título del Detalle" wrapText="true"/>
-        
-        <!-- Incluimos el componente de acciones aquí -->
+
         <fx:include fx:id="actions" source="actions-view.fxml"/>
 
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 10 0 0 0;">

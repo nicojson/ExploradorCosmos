@@ -7,6 +7,7 @@ import com.example.explorandoelcosmos.dao.PublicationDAOImpl;
 import com.example.explorandoelcosmos.model.ApiEndpointConfig;
 import com.example.explorandoelcosmos.model.Publication;
 import com.example.explorandoelcosmos.model.User;
+import com.example.explorandoelcosmos.service.ApodService;
 import com.example.explorandoelcosmos.service.AstronomyApiService;
 import com.example.explorandoelcosmos.service.JWSTService;
 import com.example.explorandoelcosmos.service.NasaLibraryService;
@@ -43,38 +44,20 @@ import java.util.stream.IntStream;
 public class MainProgramController {
 
     // === FXML Fields ===
-    @FXML
-    private StackPane rootStackPane;
-    @FXML
-    private ScrollPane contentScrollPane;
-    @FXML
-    private GridPane contentContainer;
-    @FXML
-    private Label btnFavoritos;
-    @FXML
-    private Label userDataLabel;
-    @FXML
-    private MenuButton menuButton;
-    @FXML
-    private VBox progressBox;
-    @FXML
-    private Label progressLabel;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private TextField searchField;
-
-    // New UX Search Fields
-    @FXML
-    private VBox filterPane;
-    @FXML
-    private ComboBox<Integer> yearStartComboBox;
-    @FXML
-    private ComboBox<Integer> yearEndComboBox;
-
-    // Nuevo ComboBox para seleccionar APIs
-    @FXML
-    private ComboBox<String> apiComboBox;
+    @FXML private StackPane rootStackPane;
+    @FXML private ScrollPane contentScrollPane;
+    @FXML private GridPane contentContainer;
+    @FXML private Label btnFavoritos;
+    @FXML private Label userDataLabel;
+    @FXML private MenuButton menuButton;
+    @FXML private VBox progressBox;
+    @FXML private Label progressLabel;
+    @FXML private ProgressBar progressBar;
+    @FXML private TextField searchField;
+    @FXML private VBox filterPane;
+    @FXML private ComboBox<Integer> yearStartComboBox;
+    @FXML private ComboBox<Integer> yearEndComboBox;
+    @FXML private ComboBox<String> apiComboBox;
 
     // === Class Fields ===
     private String activeEndpointName;
@@ -87,6 +70,8 @@ public class MainProgramController {
     private final AstronomyApiService astronomyApiService = new AstronomyApiService();
     private final NasaLibraryService nasaLibraryService = new NasaLibraryService();
     private final JWSTService jwstService = new JWSTService();
+    // Servicio nuevo para la Foto del Día
+    private final ApodService apodService = new ApodService();
     private final ReportService reportService = new ReportService();
     private final AppConfigDAO appConfigDAO = new AppConfigDAOImpl();
     private final PublicationDAO publicationDAO = new PublicationDAOImpl();
@@ -129,7 +114,6 @@ public class MainProgramController {
         yearEndComboBox.getItems().addAll(years);
         yearStartComboBox.setValue(1920);
         yearEndComboBox.setValue(LocalDate.now().getYear());
-
         filterPane.setTranslateY(150);
     }
 
@@ -156,27 +140,19 @@ public class MainProgramController {
             userDataLabel.setText("Modo: Invitado");
             btnFavoritos.setVisible(false);
             btnFavoritos.setManaged(false);
-
             MenuItem editarPerfil = findMenuItem(menuButton, "Editar Perfil");
-            if (editarPerfil != null)
-                editarPerfil.setVisible(false);
+            if (editarPerfil != null) editarPerfil.setVisible(false);
         }
     }
 
     private MenuItem findMenuItem(MenuButton menuButton, String text) {
         for (MenuItem item : menuButton.getItems()) {
-            if (text.equals(item.getText())) {
-                return item;
-            }
+            if (text.equals(item.getText())) return item;
         }
         return null;
     }
 
-    public void showDetailedView(String imageUrl, String title, String details) {
-        showDetailedView(imageUrl, title, details, null);
-    }
-
-    public void showDetailedView(String imageUrl, String title, String details, Publication publication) {
+    public void showDetailedView(String imageUrl, String title, String details, String videoUrl) {
         try {
             if (overlay == null) {
                 overlay = new StackPane();
@@ -184,12 +160,11 @@ public class MainProgramController {
                 overlay.setOnMouseClicked(event -> hideDetailedView());
             }
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/example/explorandoelcosmos/detailed-card-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/detailed-card-view.fxml"));
             detailedView = loader.load();
             DetailedCardController controller = loader.getController();
             controller.setMainController(this);
-            controller.setData(imageUrl, title, details, publication);
+            controller.setData(imageUrl, title, details, videoUrl);
 
             detailedView.setScaleX(0.8);
             detailedView.setScaleY(0.8);
@@ -251,14 +226,22 @@ public class MainProgramController {
                             .map(ApiEndpointConfig::getEndpointName)
                             .collect(Collectors.toList()));
             apiComboBox.setItems(endpointNames);
+
             if (!endpointNames.isEmpty()) {
-                apiComboBox.getSelectionModel().selectFirst();
+                // Seleccionar APOD por defecto si existe
+                if (endpointNames.contains("Astronomy API")) {
+                    apiComboBox.getSelectionModel().select("Astronomy API");
+                } else if (endpointNames.contains("Foto del Día")) {
+                    apiComboBox.getSelectionModel().select("Foto del Día");
+                } else {
+                    apiComboBox.getSelectionModel().selectFirst();
+                }
+
                 activeEndpointName = apiComboBox.getSelectionModel().getSelectedItem();
                 loadDataForActiveFilter("", 0, 0);
             }
         });
-        task.setOnFailed(
-                e -> NotificationManager.showError("Error", "No se pudieron cargar los nombres de los endpoints."));
+        task.setOnFailed(e -> NotificationManager.showError("Error", "No se pudieron cargar los nombres de los endpoints."));
         new Thread(task).start();
     }
 
@@ -283,13 +266,51 @@ public class MainProgramController {
     }
 
     private void loadDataForActiveFilter(String query, int yearStart, int yearEnd) {
-        showLoadingSkeletons();
+        // Lógica visual: Solo mostrar esqueletos si NO es APOD
+        if (!activeEndpointName.equals("Astronomy API") && !activeEndpointName.equals("Foto del Día")) {
+            showLoadingSkeletons();
+        } else {
+            contentContainer.getChildren().clear(); // Limpiar para APOD
+        }
+
         String filterName = activeEndpointName;
 
         loadInThread(() -> {
             try {
                 List<Publication> publications = new ArrayList<>();
 
+                // === LÓGICA APOD (Foto del Día) ===
+                if (filterName.equals("Foto del Día") || filterName.equals("Astronomy API")) {
+                    try {
+                        // Obtener objeto único
+                        Publication apod = apodService.getTodaysApodAsPublication();
+
+                        // Actualizar UI con Vista Especial Centrada
+                        Platform.runLater(() -> {
+                            try {
+                                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/apod-view.fxml"));
+                                Node apodNode = loader.load();
+                                ApodController controller = loader.getController();
+                                controller.setData(apod);
+
+                                contentContainer.getChildren().clear();
+                                contentContainer.add(apodNode, 0, 0);
+
+                                // Forzar centrado en el GridPane
+                                javafx.scene.layout.GridPane.setHalignment(apodNode, javafx.geometry.HPos.CENTER);
+                                javafx.scene.layout.GridPane.setValignment(apodNode, javafx.geometry.VPos.CENTER);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        return; // Salir para no ejecutar lógica de lista
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // === LÓGICA LISTAS (SpaceX, NASA, etc.) ===
                 switch (filterName) {
                     case "SpaceX":
                         publications.addAll(spaceXService.getRocketsAsPublications());
@@ -302,18 +323,10 @@ public class MainProgramController {
                     case "NASA":
                         publications.addAll(nasaLibraryService.searchImagesAsPublications(query, yearStart, yearEnd));
                         break;
-                    case "Foto del Día": // Astronomy API
-                        // Implement mapping if needed
-                        break;
-                    default:
-                        Platform.runLater(() -> NotificationManager.showWarning("API Desconocida",
-                                "El endpoint seleccionado no tiene una lógica de carga implementada."));
-                        break;
                 }
 
                 List<Publication> filteredData = filterPublications(publications, query);
 
-                // CRITICAL FIX: Move UI creation to JavaFX thread
                 Platform.runLater(() -> {
                     try {
                         List<Node> cards = new ArrayList<>();
@@ -325,6 +338,7 @@ public class MainProgramController {
                         handleApiError(filterName, e);
                     }
                 });
+
             } catch (IOException e) {
                 handleApiError(filterName, e);
             }
@@ -332,9 +346,7 @@ public class MainProgramController {
     }
 
     private List<Publication> filterPublications(List<Publication> data, String query) {
-        if (query.isEmpty()) {
-            return data;
-        }
+        if (query.isEmpty()) return data;
         String lowerCaseQuery = query.toLowerCase();
         return data.stream()
                 .filter(item -> item.getTitle().toLowerCase().contains(lowerCaseQuery) ||
@@ -344,18 +356,20 @@ public class MainProgramController {
 
     private void showLoadingSkeletons() {
         contentContainer.getChildren().clear();
+        // Cargar 9 esqueletos para la cuadrícula de 3x3
         for (int i = 0; i < 9; i++) {
             try {
-                Node card = FXMLLoader
-                        .load(getClass().getResource("/com/example/explorandoelcosmos/loading-card-view.fxml"));
+                Node card = FXMLLoader.load(getClass().getResource("/com/example/explorandoelcosmos/loading-card-view.fxml"));
                 FadeTransition ft = new FadeTransition(Duration.seconds(0.8), card);
                 ft.setFromValue(1.0);
                 ft.setToValue(0.6);
                 ft.setAutoReverse(true);
                 ft.setCycleCount(FadeTransition.INDEFINITE);
                 ft.play();
-                int row = i / 3;
-                int col = i % 3;
+
+                int columns = 3;
+                int row = i / columns;
+                int col = i % columns;
                 contentContainer.add(card, col, row);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -363,16 +377,12 @@ public class MainProgramController {
         }
     }
 
-    private void updateGrid(List<Node> cards) {
-        Platform.runLater(() -> updateGridInternal(cards));
-    }
-
     private void updateGridInternal(List<Node> cards) {
         contentContainer.getChildren().clear();
         if (cards.isEmpty()) {
-            NotificationManager.showInfo("Sin Resultados",
-                    "No se encontraron elementos que coincidan con la búsqueda.");
+            NotificationManager.showInfo("Sin Resultados", "No se encontraron elementos.");
         } else {
+            // Usar 3 columnas
             int columns = 3;
             for (int i = 0; i < cards.size(); i++) {
                 int row = i / columns;
@@ -396,24 +406,14 @@ public class MainProgramController {
         });
     }
 
-    public void handleCerrarSesion(ActionEvent actionEvent) {
-        // Implement logout logic
-    }
-
-    public void handleEditarPerfil(ActionEvent actionEvent) {
-        // Implement edit profile logic
-    }
-
-    public void handleAcercaDe(ActionEvent actionEvent) {
-        // Implement about logic
-    }
+    public void handleCerrarSesion(ActionEvent actionEvent) {}
+    public void handleEditarPerfil(ActionEvent actionEvent) {}
+    public void handleAcercaDe(ActionEvent actionEvent) {}
 
     public void handleFilterFavoritos(MouseEvent mouseEvent) {
         showLoadingSkeletons();
         loadInThread(() -> {
             List<Publication> favorites = publicationDAO.findFavorites();
-
-            // Move UI creation to JavaFX thread
             Platform.runLater(() -> {
                 try {
                     List<Node> cards = new ArrayList<>();
@@ -443,23 +443,17 @@ public class MainProgramController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
         File file = fileChooser.showSaveDialog(rootStackPane.getScene().getWindow());
 
-        if (file == null) {
-            return;
-        }
+        if (file == null) return;
 
         Task<Void> reportTask = new Task<>() {
             @Override
             protected Void call() throws Exception {
                 updateMessage("Obteniendo datos para el reporte...");
                 updateProgress(0, 100);
-
                 List<?> data = fetchDataForReport(reportName);
-
                 updateMessage("Generando archivo PDF...");
                 updateProgress(50, 100);
-
                 reportService.generatePdfReport("Reporte de " + reportName, data, file.getAbsolutePath());
-
                 updateProgress(100, 100);
                 updateMessage("¡Reporte generado!");
                 return null;
@@ -469,16 +463,14 @@ public class MainProgramController {
         reportTask.setOnSucceeded(e -> {
             progressBox.setVisible(false);
             progressBox.setManaged(false);
-            NotificationManager.showSuccess("Éxito",
-                    "El reporte se ha guardado correctamente en:\n" + file.getAbsolutePath());
+            NotificationManager.showSuccess("Éxito", "El reporte se ha guardado correctamente.");
         });
 
         reportTask.setOnFailed(e -> {
             progressBox.setVisible(false);
             progressBox.setManaged(false);
-            Throwable ex = reportTask.getException();
-            NotificationManager.showError("Error", "No se pudo generar el reporte: " + ex.getMessage());
-            ex.printStackTrace();
+            NotificationManager.showError("Error", "No se pudo generar el reporte.");
+            reportTask.getException().printStackTrace();
         });
 
         progressLabel.textProperty().bind(reportTask.messageProperty());

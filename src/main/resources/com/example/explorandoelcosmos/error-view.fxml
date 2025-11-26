@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.geometry.Insets?>
 
+<?import java.lang.classfile.Label?>
+<?import java.awt.Insets?>
 <VBox xmlns="http://javafx.com/javafx"
       alignment="CENTER"
       spacing="10"

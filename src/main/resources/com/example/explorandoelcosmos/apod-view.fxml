@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.ApodController"
+      alignment="CENTER"
+      spacing="15"
+      style="-fx-background-color: transparent;"
+      maxWidth="600.0" maxHeight="400.0">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <StackPane prefWidth="280.0" prefHeight="280.0" alignment="CENTER">
+        <ImageView fx:id="imageView" fitWidth="260.0" fitHeight="260.0" preserveRatio="true" visible="false"/>
+        <WebView fx:id="videoWebView" prefWidth="260.0" prefHeight="260.0" visible="false"/>
+    </StackPane>
+
+    <VBox spacing="8" prefWidth="280.0" alignment="CENTER_LEFT">
+
+        <Label text="IMAGEN ASTRONÓMICA DEL DÍA" style="-fx-font-size: 10px; -fx-text-fill: #1ABC9C; -fx-font-weight: bold;"/>
+
+        <Label fx:id="titleLabel" text="Título" wrapText="true"
+               style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+
+        <Label fx:id="dateLabel" text="YYYY-MM-DD" style="-fx-text-fill: #888; -fx-font-size: 11px;"/>
+
+        <VBox spacing="2">
+            <Label text="URL del recurso:" style="-fx-text-fill: #666; -fx-font-size: 9px; -fx-font-weight: bold;"/>
+            <Label fx:id="urlLabel" text="https://..." style="-fx-text-fill: #aaa; -fx-font-size: 9px;" wrapText="false" maxWidth="260"/>
+
+            <HBox spacing="5">
+                <Label text="Versión del Servicio:" style="-fx-text-fill: #666; -fx-font-size: 9px; -fx-font-weight: bold;"/>
+                <Label fx:id="versionLabel" text="v1" style="-fx-text-fill: #aaa; -fx-font-size: 9px;"/>
+            </HBox>
+        </VBox>
+
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;" VBox.vgrow="ALWAYS" prefHeight="120.0">
+            <content>
+                <Label fx:id="descriptionLabel" text="Descripción..." wrapText="true"
+                       style="-fx-text-fill: #ccc; -fx-font-size: 11px; -fx-line-spacing: 3px;" maxWidth="260.0"/>
+            </content>
+        </ScrollPane>
+
+        <fx:include fx:id="actions" source="actions-view.fxml"/>
+    </VBox>
+
+</HBox>

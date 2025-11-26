@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Pane?>
-
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.explorandoelcosmos.controllers.CardController"
       styleClass="card-view"
-      alignment="TOP_CENTER"
-      spacing="10"
-      onMouseClicked="#handleCardClick">
+      onMouseClicked="#handleCardClick"
+      maxWidth="180.0"
+      spacing="8">
 
-    <StackPane styleClass="card-image-pane" prefHeight="120.0">
-        <ImageView fx:id="imageView" fitHeight="120.0" fitWidth="180.0" preserveRatio="false"/>
+    <padding>
+        <Insets top="8" right="8" bottom="8" left="8"/>
+    </padding>
+
+    <StackPane alignment="CENTER">
+        <ImageView fx:id="imageView" fitHeight="120.0" fitWidth="170.0" pickOnBounds="true" preserveRatio="true" />
+
+        <StackPane fx:id="playIconContainer" visible="false" maxHeight="40.0" maxWidth="40.0"
+                   style="-fx-background-color: rgba(0,0,0,0.6); -fx-background-radius: 50%; -fx-cursor: hand;">
+            <Label text="▶" textFill="WHITE" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0 0 2 3;"/>
+        </StackPane>
     </StackPane>
-    <Label fx:id="cardTitle" styleClass="card-title" text="Título de la Imagen" wrapText="true"/>
 
-    <!-- Incluimos el componente de acciones -->
+    <Label fx:id="cardTitle" styleClass="card-title" wrapText="true" maxWidth="170.0" style="-fx-font-size: 12px;"/>
+
     <fx:include fx:id="actions" source="actions-view.fxml"/>
 
 </VBox>

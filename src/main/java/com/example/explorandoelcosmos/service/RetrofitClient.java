@@ -12,7 +12,7 @@ public class RetrofitClient {
 
     private static HttpLoggingInterceptor createLogger() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return logging;
     }
 
