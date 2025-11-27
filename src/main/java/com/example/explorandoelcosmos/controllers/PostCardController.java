@@ -49,7 +49,7 @@ public class PostCardController {
         }
 
         // Setup actions
-        actionsController.setData(publication.getTitle(), publication.getMainImageUrl());
+        actionsController.setData(publication, mainController);
     }
 
     private String getRelativeTime(LocalDateTime date) {
@@ -67,9 +67,8 @@ public class PostCardController {
 
     @FXML
     private void handleCardClick() {
-        if (mainController != null) {
-            mainController.showDetailedView(publication.getMainImageUrl(), publication.getTitle(),
-                    publication.getDescription(), publication.getContentUrl());
+        if (mainController != null && publication != null) {
+            mainController.showDetailedView(publication);
         }
     }
 }

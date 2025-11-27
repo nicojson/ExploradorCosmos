@@ -15,8 +15,8 @@ public class DatabaseManager {
 
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/explorandoelcosmos";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "paputo12";
+    private static final String DB_USER = "topicos_demo";
+    private static final String DB_PASSWORD = "newPassword";
 
     private static final HikariDataSource dataSource;
 

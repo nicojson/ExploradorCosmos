@@ -19,7 +19,7 @@ public class ApodController {
     @FXML private Label versionLabel;
     @FXML private ActionsController actionsController;
 
-    public void setData(Publication publication) {
+    public void setData(Publication publication, MainProgramController mainController) {
         titleLabel.setText(publication.getTitle());
         descriptionLabel.setText(publication.getDescription());
         urlLabel.setText(publication.getContentUrl() != null ? publication.getContentUrl() : publication.getMainImageUrl());
@@ -32,7 +32,7 @@ public class ApodController {
         }
 
         if (actionsController != null) {
-            actionsController.setData(publication.getTitle(), publication.getMainImageUrl());
+            actionsController.setData(publication, mainController);
         }
 
         String url = publication.getContentUrl() != null ? publication.getContentUrl() : publication.getMainImageUrl();

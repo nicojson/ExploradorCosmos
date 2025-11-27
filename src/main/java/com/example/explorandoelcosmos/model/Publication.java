@@ -1,5 +1,6 @@
 package com.example.explorandoelcosmos.model;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class Publication {
@@ -59,4 +60,25 @@ public class Publication {
     public void setLocalPath(String localPath) { this.localPath = localPath; }
     public String getServiceVersion() { return serviceVersion; }
     public void setServiceVersion(String serviceVersion) { this.serviceVersion = serviceVersion; }
+
+    public void setImageUrl(String imageUrl) {
+        this.mainImageUrl = imageUrl;
+    }
+
+    public void setPublicationDate(Date publicationDate) {
+        this.publishedDate = publicationDate.toLocalDate().atStartOfDay();
+    }
+
+    public void setSourceId(int sourceId) {
+        this.sourceApiId = sourceId;
+
+    }
+
+    public String getImageUrl() {
+        return mainImageUrl;
+    }
+
+    public Date getPublicationDate() {
+        return Date.valueOf(publishedDate.toLocalDate());
+    }
 }

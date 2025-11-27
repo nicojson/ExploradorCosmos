@@ -42,6 +42,10 @@
         <Label fx:id="btnReports" text="Generar&#10;Reporte" styleClass="celestial-button" AnchorPane.rightAnchor="50"
                AnchorPane.bottomAnchor="180" onMouseClicked="#handleReportsClick"/>
 
+        <VBox alignment="CENTER" spacing="10" AnchorPane.topAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <ToggleButton fx:id="offlineModeToggle" text="Modo Offline"/>
+        </VBox>
+
         <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0"
               AnchorPane.rightAnchor="0">
 

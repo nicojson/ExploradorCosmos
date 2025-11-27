@@ -28,6 +28,7 @@ module com.example.explorandoelcosmos {
 
     // Kotlin standard library
     requires kotlin.stdlib;
+    requires javafx.media;
 
     // Open packages for reflection
     opens com.example.explorandoelcosmos.controllers to javafx.fxml;

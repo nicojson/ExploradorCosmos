@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.media.MediaView?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.explorandoelcosmos.controllers.OfflineVideoController"
+      styleClass="detailed-card-view"
+      alignment="TOP_CENTER"
+      maxWidth="600.0" maxHeight="700.0">
+
+    <StackPane fx:id="mediaContainer" styleClass="detailed-card-image-pane" prefHeight="350.0">
+        <MediaView fx:id="mediaView" />
+    </StackPane>
+
+    <VBox spacing="10" alignment="TOP_LEFT" VBox.vgrow="ALWAYS" style="-fx-padding: 20px;">
+        <Label fx:id="titleLabel" styleClass="detailed-card-title" text="Título del Detalle" wrapText="true"/>
+
+        <fx:include fx:id="actions" source="actions-view.fxml"/>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 10 0 0 0;">
+            <Label fx:id="detailsLabel" styleClass="detailed-card-details" text="Aquí van todos los detalles..." wrapText="true"/>
+        </ScrollPane>
+    </VBox>
+
+    <Button text="CERRAR" onAction="#handleCloseClick" styleClass="form-button">
+        <VBox.margin><Insets top="20"/></VBox.margin>
+    </Button>
+
+    <padding>
+        <Insets bottom="20.0"/>
+    </padding>
+</VBox>

@@ -2,6 +2,8 @@ package com.example.explorandoelcosmos.controllers;
 
 import com.example.explorandoelcosmos.dao.AppConfigDAO;
 import com.example.explorandoelcosmos.dao.AppConfigDAOImpl;
+import com.example.explorandoelcosmos.dao.OfflineContentDAO;
+import com.example.explorandoelcosmos.dao.OfflineContentDAOImpl;
 import com.example.explorandoelcosmos.dao.PublicationDAO;
 import com.example.explorandoelcosmos.dao.PublicationDAOImpl;
 import com.example.explorandoelcosmos.model.ApiEndpointConfig;
@@ -58,6 +60,7 @@ public class MainProgramController {
     @FXML private ComboBox<Integer> yearStartComboBox;
     @FXML private ComboBox<Integer> yearEndComboBox;
     @FXML private ComboBox<String> apiComboBox;
+    @FXML private ToggleButton offlineModeToggle;
 
     // === Class Fields ===
     private String activeEndpointName;
@@ -70,11 +73,11 @@ public class MainProgramController {
     private final AstronomyApiService astronomyApiService = new AstronomyApiService();
     private final NasaLibraryService nasaLibraryService = new NasaLibraryService();
     private final JWSTService jwstService = new JWSTService();
-    // Servicio nuevo para la Foto del Día
     private final ApodService apodService = new ApodService();
     private final ReportService reportService = new ReportService();
     private final AppConfigDAO appConfigDAO = new AppConfigDAOImpl();
     private final PublicationDAO publicationDAO = new PublicationDAOImpl();
+    private final OfflineContentDAO offlineContentDAO = new OfflineContentDAOImpl();
 
     @FXML
     public void initialize() {
@@ -82,6 +85,36 @@ public class MainProgramController {
         setupSearchInteraction();
         setupFilterPane();
         loadApiEndpointsIntoComboBox();
+        setupOfflineModeToggle();
+    }
+
+    private void setupOfflineModeToggle() {
+        offlineModeToggle.setOnAction(event -> {
+            if (offlineModeToggle.isSelected()) {
+                loadOfflineContent();
+            } else {
+                handleLoadSelectedApi();
+            }
+        });
+    }
+
+    private void loadOfflineContent() {
+        showLoadingSkeletons();
+        loadInThread(() -> {
+            List<Publication> offlinePublications = offlineContentDAO.findAll();
+            Platform.runLater(() -> {
+                try {
+                    List<Node> cards = new ArrayList<>();
+                    for (Publication item : offlinePublications) {
+                        cards.add(createCardNode(item));
+                    }
+                    updateGridInternal(cards);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    NotificationManager.showError("Error", "No se pudo cargar el contenido offline.");
+                }
+            });
+        });
     }
 
     private void setupOcularClip() {
@@ -152,7 +185,7 @@ public class MainProgramController {
         return null;
     }
 
-    public void showDetailedView(String imageUrl, String title, String details, String videoUrl) {
+    public void showDetailedView(Publication publication) {
         try {
             if (overlay == null) {
                 overlay = new StackPane();
@@ -160,11 +193,31 @@ public class MainProgramController {
                 overlay.setOnMouseClicked(event -> hideDetailedView());
             }
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/detailed-card-view.fxml"));
+            // --- INICIO DE BLOQUE DE DEPURACIÓN ---
+            System.out.println("--- Depurando showDetailedView ---");
+            System.out.println("Título: " + publication.getTitle());
+            System.out.println("Tipo de Contenido: " + publication.getContentType());
+            System.out.println("Ruta Local: " + publication.getLocalPath());
+            // --- FIN DE BLOQUE DE DEPURACIÓN ---
+
+            boolean isOfflineVideo = "video".equals(publication.getContentType()) && publication.getLocalPath() != null;
+            System.out.println("¿Es video offline?: " + isOfflineVideo); // Imprime el resultado de la decisión
+
+            String fxmlFile = isOfflineVideo ? "/com/example/explorandoelcosmos/offline-video-view.fxml" : "/com/example/explorandoelcosmos/detailed-card-view.fxml";
+            System.out.println("Cargando FXML: " + fxmlFile);
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             detailedView = loader.load();
-            DetailedCardController controller = loader.getController();
-            controller.setMainController(this);
-            controller.setData(imageUrl, title, details, videoUrl);
+
+            if (isOfflineVideo) {
+                OfflineVideoController controller = loader.getController();
+                controller.setMainController(this);
+                controller.setData(publication);
+            } else {
+                DetailedCardController controller = loader.getController();
+                controller.setMainController(this);
+                controller.setData(publication);
+            }
 
             detailedView.setScaleX(0.8);
             detailedView.setScaleY(0.8);
@@ -189,6 +242,13 @@ public class MainProgramController {
 
     public void hideDetailedView() {
         if (detailedView != null && overlay != null) {
+            Object controller = detailedView.getUserData();
+            if (controller instanceof DetailedCardController) {
+                ((DetailedCardController) controller).handleCloseClick();
+            } else if (controller instanceof OfflineVideoController) {
+                ((OfflineVideoController) controller).handleCloseClick();
+            }
+
             FadeTransition fadeOverlay = new FadeTransition(Duration.millis(200), overlay);
             fadeOverlay.setToValue(0);
 
@@ -228,7 +288,6 @@ public class MainProgramController {
             apiComboBox.setItems(endpointNames);
 
             if (!endpointNames.isEmpty()) {
-                // Seleccionar APOD por defecto si existe
                 if (endpointNames.contains("Astronomy API")) {
                     apiComboBox.getSelectionModel().select("Astronomy API");
                 } else if (endpointNames.contains("Foto del Día")) {
@@ -266,11 +325,15 @@ public class MainProgramController {
     }
 
     private void loadDataForActiveFilter(String query, int yearStart, int yearEnd) {
-        // Lógica visual: Solo mostrar esqueletos si NO es APOD
+        if (offlineModeToggle.isSelected()) {
+            loadOfflineContent();
+            return;
+        }
+
         if (!activeEndpointName.equals("Astronomy API") && !activeEndpointName.equals("Foto del Día")) {
             showLoadingSkeletons();
         } else {
-            contentContainer.getChildren().clear(); // Limpiar para APOD
+            contentContainer.getChildren().clear();
         }
 
         String filterName = activeEndpointName;
@@ -279,38 +342,31 @@ public class MainProgramController {
             try {
                 List<Publication> publications = new ArrayList<>();
 
-                // === LÓGICA APOD (Foto del Día) ===
                 if (filterName.equals("Foto del Día") || filterName.equals("Astronomy API")) {
                     try {
-                        // Obtener objeto único
                         Publication apod = apodService.getTodaysApodAsPublication();
-
-                        // Actualizar UI con Vista Especial Centrada
                         Platform.runLater(() -> {
                             try {
                                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/explorandoelcosmos/apod-view.fxml"));
                                 Node apodNode = loader.load();
                                 ApodController controller = loader.getController();
-                                controller.setData(apod);
+                                controller.setData(apod, this);
 
                                 contentContainer.getChildren().clear();
                                 contentContainer.add(apodNode, 0, 0);
-
-                                // Forzar centrado en el GridPane
-                                javafx.scene.layout.GridPane.setHalignment(apodNode, javafx.geometry.HPos.CENTER);
-                                javafx.scene.layout.GridPane.setValignment(apodNode, javafx.geometry.VPos.CENTER);
+                                GridPane.setHalignment(apodNode, javafx.geometry.HPos.CENTER);
+                                GridPane.setValignment(apodNode, javafx.geometry.VPos.CENTER);
 
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                         });
-                        return; // Salir para no ejecutar lógica de lista
+                        return;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
 
-                // === LÓGICA LISTAS (SpaceX, NASA, etc.) ===
                 switch (filterName) {
                     case "SpaceX":
                         publications.addAll(spaceXService.getRocketsAsPublications());
@@ -356,7 +412,6 @@ public class MainProgramController {
 
     private void showLoadingSkeletons() {
         contentContainer.getChildren().clear();
-        // Cargar 9 esqueletos para la cuadrícula de 3x3
         for (int i = 0; i < 9; i++) {
             try {
                 Node card = FXMLLoader.load(getClass().getResource("/com/example/explorandoelcosmos/loading-card-view.fxml"));
@@ -382,7 +437,6 @@ public class MainProgramController {
         if (cards.isEmpty()) {
             NotificationManager.showInfo("Sin Resultados", "No se encontraron elementos.");
         } else {
-            // Usar 3 columnas
             int columns = 3;
             for (int i = 0; i < cards.size(); i++) {
                 int row = i / columns;
@@ -461,24 +515,30 @@ public class MainProgramController {
         };
 
         reportTask.setOnSucceeded(e -> {
-            progressBox.setVisible(false);
-            progressBox.setManaged(false);
+            hideProgressBar();
             NotificationManager.showSuccess("Éxito", "El reporte se ha guardado correctamente.");
         });
 
         reportTask.setOnFailed(e -> {
-            progressBox.setVisible(false);
-            progressBox.setManaged(false);
+            hideProgressBar();
             NotificationManager.showError("Error", "No se pudo generar el reporte.");
             reportTask.getException().printStackTrace();
         });
 
-        progressLabel.textProperty().bind(reportTask.messageProperty());
-        progressBar.progressProperty().bind(reportTask.progressProperty());
+        showProgressBar(reportTask);
+        new Thread(reportTask).start();
+    }
+
+    public void showProgressBar(Task<?> task) {
+        progressLabel.textProperty().bind(task.messageProperty());
+        progressBar.progressProperty().bind(task.progressProperty());
         progressBox.setVisible(true);
         progressBox.setManaged(true);
+    }
 
-        new Thread(reportTask).start();
+    public void hideProgressBar() {
+        progressBox.setVisible(false);
+        progressBox.setManaged(false);
     }
 
     private List<?> fetchDataForReport(String endpointName) throws IOException {
